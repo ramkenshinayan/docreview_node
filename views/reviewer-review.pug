@@ -1,15 +1,15 @@
 doctype html
-html(lang='en')
+html
   head
     meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    meta(name='description', content='SLU Document Review Tracker')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description' content='SLU Document Review Tracker')
     title SLU Document Review Tracker
-    link(rel='icon', type='image/png', href='/images/slu_logo.png')
+    link(rel='icon' type='image/png' href='/images/slu_logo.png')
     // MAIN CSS
-    link(href='/stylesheets/user-home.css', rel='stylesheet')
-    link(href='/stylesheets/reviewer-review.css', rel='stylesheet')
+    link(href='/stylesheets/reviewer-home.css' rel='stylesheet')
+    link(href='/stylesheets/reviewer-review.css' rel='stylesheet')
   body
     // SIDE BAR
     nav.sidebar.close
@@ -17,7 +17,7 @@ html(lang='en')
       header
         .image-text
           span.image
-            img(src='/images/slu_logo.png', alt='logo')
+            img(src='/images/slu_logo.png' alt='logo')
           .text.header-text
             span.name Saint Louis University
             span.task Document Review Tracker
@@ -60,10 +60,11 @@ html(lang='en')
       .top
         .search-box
           ion-icon.search-icon(name='search-outline')
-          input(type='search', placeholder='Search...')
+          input(type='search' placeholder='Search...')
         .profile-details
-          img(src='/images/school.png', alt='')
-          span.user_name Kasima Supremacy
+          img(src='/images/school.png' alt='')
+          span.user_name
+            p(id='username')
           ion-icon.profile-icon(name='radio-button-on-outline')
       .home-content
         .overview
@@ -71,14 +72,13 @@ html(lang='en')
             ion-icon.content-icon(name='bar-chart-outline')
             span.text For Approvals
           .approvals
-            input#radioButton(type='radio', name='radioGroup')
+            input#radioButton(type='radio' name='radioGroup')
             label(for='radioButton')
               | Document Name 
               br
               |  Document ID
-            // dynamically created document list
-    // CUSTOM JS
-    script(type='module', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
-    script(nomodule='', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
-    script(src='/javascripts/user-home.js')
-    script(src='/javascripts/reviewer-review.js')
+              br
+            // CUSTOM JS
+            script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+            script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+            script(src='/javascripts/reviewer-review.js')

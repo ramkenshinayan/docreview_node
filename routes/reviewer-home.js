@@ -1,19 +1,21 @@
 var express = require('express');
 var router = express.Router();
+var session = require('express-session');
+var mysql = require('mysql');
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
-    res.redirect('reviewer-home');
+    res.render('reviewer-home');
 });
 
 // GET reviewer-view page
 router.get('/reviewer-view', (req, res, next) => {
-    res.redirect('reviewer-view');
+    res.render('reviewer-view');
 });
 
 // GET reviewer-add page
-router.get('/reviewer-add', (req, res, next) => {
-    res.redirect('reviewer-add');
+router.get('/reviewer-review', (req, res, next) => {
+    res.render('reviewer-review');
 });
 
 // GET user details
@@ -34,5 +36,24 @@ router.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 });
+
+// GET count documents
+router.get('/total', (req, res) => {
+    global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+        res.send(String(result.length));
+    });
+});
+
+// router.get('/toreview', (req, res) => {
+//     global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+//         res.send(result.length);
+//     });
+// });
+
+// router.get('/overdue', (req, res) => {
+//     global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+//         res.send(result.length);
+//     });
+// });
 
 module.exports = router;

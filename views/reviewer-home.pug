@@ -2,13 +2,13 @@ doctype html
 html
   head
     meta(charset='utf-8')
-    meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
-    meta(name='description', content='SLU Document Review Tracker')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description' content='SLU Document Review Tracker')
     title SLU Document Review Tracker
-    link(rel='icon', type='image/png', href='/images/slu_logo.png')
+    link(rel='icon' type='image/png' href='/images/slu_logo.png')
     // MAIN CSS
-    link(href='/stylesheets/user-home.css', rel='stylesheet')
+    link(href='/stylesheets/reviewer-home.css' rel='stylesheet')
   // SIDE BAR
   body
     nav.sidebar.close
@@ -16,7 +16,7 @@ html
       header
         .image-text
           span.image
-            img(src='/images/slu_logo.png', alt='logo')
+            img(src='/images/slu_logo.png' alt='logo')
           .text.header-text
             span.name Saint Louis University
             span.task Document Review Tracker
@@ -59,9 +59,9 @@ html
       .top
         .search-box
           ion-icon.search-icon(name='search-outline')
-          input(type='search', placeholder='Search...')
+          input(type='search' placeholder='Search...')
         .profile-details
-          img(src='/images/school.png', alt='')
+          img(src='/images/school.png' alt='')
           span.user_name
             p(id='username')
           ion-icon.profile-icon(name='radio-button-on-outline')
@@ -71,31 +71,29 @@ html
             ion-icon.content-icon(name='bar-chart-outline')
             span.text Home
           .banner
-            h3
-              | Welcome Back, 
-              span
-              |  ! 
-              span
+            h3(id='welcome')
                 a.get-started-btn(href='reviewer-review')
                   button(type='button') Get Started
-            img(src='/images/home-img.png', alt='home')
+            img(src='/images/home-img.png' alt='home')
           // DASHBOARD
           .boxes
             .box.box1
-              ion-icon.box-icon(name='documents-outline')
-              |  
+              ion-icon.box-icon(name='documents-outline') 
               span.text Total Documents
               span#total-docs.number
+                p(id='total')
             .box.box2
               ion-icon.box-icon(name='mail-unread-outline')
               span.text Documents to be Reviewed
               span#review-docs.number
+                p(id='toreview')
             .box.box3
               ion-icon.box-icon(name='stopwatch-outline')
               span.text Overdue Reviews
               span#late-docs.number
+                p(id='overdue')
     // CUSTOM JS
-    script(type='module', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
-    script(nomodule='', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+    script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+    script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
     script(src='/javascripts/sidebar.js')
     script(src='/javascripts/reviewer-home.js')

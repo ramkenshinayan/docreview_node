@@ -11,6 +11,12 @@ const sort = document.querySelector(".sort-box"),
 	filterItems = document.querySelectorAll(".filter-items"),
 
 	documentName = document.querySelector(".name");
+
+    fetch('/userDetails')
+	.then(res => res.json())
+	.then(data => {
+		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
+	});
 	
 	//EXPAND SORT
 	for (let i = 0; i < sortCol.length; i++) {

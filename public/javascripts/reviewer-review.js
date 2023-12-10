@@ -1,3 +1,9 @@
+fetch('/userDetails')
+	.then(res => res.json())
+	.then(data => {
+		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
+	});
+
 // sample data
 const documentData = {
 	name: 'Document Name',
