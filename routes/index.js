@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 var mysql = require('mysql');
+var loginResult;
 
 // Start session
 router.use(session({
@@ -41,8 +42,8 @@ router.get('/reviewer-home', (req, res, next) => {
 // POST login
 router.post('/login', (req, res) => {
   // Receive login details
-  const email = req.body.email;
-  const password = req.body.password;
+  var email = req.body.email;
+  var password = req.body.password;
   // Verify login details
   global.conn.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password], (error, result) => {
     // prompt on error
@@ -69,16 +70,22 @@ router.post('/login', (req, res) => {
           }
         });
         console.log('Log in successful.');
-        res.redirect('reviewer-home');
+        res.redirect('/reviewer-home');
+        loginResult = 'success';
       } else {
         console.log('User is already logged in.');
-        res.redirect('/');
+        loginResult = 'logged';
       }
     } else {
       console.log('Invalid email or password.');
-      res.redirect('/');
+      loginResult = 'invalid';
     }
   });
+});
+
+// GET login result
+router.get('/loginresult', (req, res) => {
+  res.send(loginResult);
 });
 
 module.exports = router;
