@@ -1,0 +1,101 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='SLU Document Review Tracker')
+    title SLU Document Review Tracker
+    link(rel='icon', type='image/png', href='/images/slu_logo.png')
+    // MAIN CSS
+    link(href='/stylesheets/user-home.css', rel='stylesheet')
+    link(href='/stylesheets/reviewer-view.css', rel='stylesheet')
+  // SIDE BAR
+  body
+    nav.sidebar.close
+      // SIDE BAR HEADER
+      header
+        .image-text
+          span.image
+            img(src='/images/slu_logo.png', alt='logo')
+          .text.header-text
+            span.name Saint Louis University
+            span.task Document Review Tracker
+        ion-icon.toggle(name='chevron-forward-outline')
+      // MENU
+      .menu-bar
+        .menu
+          ul.menu-links
+            // HOME LINK
+            li.nav-link
+              a(href='reviewer-home.html')
+                ion-icon(name='home-outline')
+                span.text.nav-text Home
+            // TRANSACTION LIST LINK
+            li.nav-link
+              a(href='reviewer-view.html')
+                ion-icon(name='file-tray-stacked-outline')
+                span.text.nav-text View Approvals
+            // REVIEWING DOCS LINK
+            li.nav-link
+              a(href='reviewer-review.html')
+                ion-icon(name='checkbox-outline')
+                span.text.nav-text For Approval
+        .bottom-content
+          // LOGOUT
+          li
+            a(href='#')
+              ion-icon(name='log-out-outline')
+              span.text.nav-text Logout
+          // TOGGLE MODES
+          li.mode
+            .moon-sun
+              ion-icon.moon(name='moon-outline')
+              ion-icon.sun(name='sunny-outline')
+            span.mode-text.text Dark Mode
+            .toggle-switch
+              span.switch
+    section.home
+      // HEADER
+      .top
+        .search-box
+          ion-icon.search-icon(name='search-outline')
+          input(type='search', placeholder='Search...')
+        .profile-details
+          img(src='/images/school.png', alt='')
+          span.user_name Juan Dela Cruz
+          ion-icon.profile-icon(name='radio-button-on-outline')
+      .home-content
+        .overview
+          .title
+            ion-icon.content-icon(name='bar-chart-outline')
+            span.text Request History
+            // filter
+            .filter-box
+              .filter-btn
+                | Filter
+                span.icon
+                  ion-icon(name='chevron-down-outline')
+              ul.filter-select
+                li.filter-items Approved
+                li.filter-items Pending
+                li.filter-items Disapproved
+            // sort
+            .sort-box
+              .sort-btn
+                | Sort
+                span.icon
+                  ion-icon(name='chevron-down-outline')
+              ul.sort-select
+                li.sort-items Name (A-Z)
+                li.sort-items Name (Z-A)
+                li.sort-items Date (ASC)
+                li.sort-items Date (DESC)
+        // transactions
+        .history
+          p No reviews available
+    // CUSTOM JS
+    script(type='module', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+    script(nomodule='', src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+    script(src='/javascripts/sidebar.js')
+    script(src='/javascripts/reviewer-view.js')

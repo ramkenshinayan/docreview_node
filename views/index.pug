@@ -1,0 +1,146 @@
+doctype html
+head
+  title SLU Document Review Tracker
+  meta(charset='utf-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+  meta(name='description' content='SLU Document Review Tracker')
+  link(rel='icon' type='image/png' href='/images/slu_logo.png')
+  // MAIN CSS
+  link(href='/stylesheets/styles.css' rel='stylesheet')
+  link(rel='stylesheet' href='https://unpkg.com/boxicons@latest/css/boxicons.min.css')
+  // NAVIGATION BAR
+header
+  input#check(type='checkbox')
+  label.check-btn(for='check')
+    ion-icon(name='menu-outline')
+  img.logo(src='/images/slu_logo.png' alt='logo')  
+  ul.nav
+    li
+      a.active(href='#home') Home
+    li
+      a(href='#request') Request
+    li
+      a(href='#tracker') Tracker
+    li
+      a(href='#about-us') About Us
+    li
+      a(href='#contact') Contact
+    .animation.start-home
+  button.cta-button Login
+
+.wrapper
+  span.icon-close
+    ion-icon(name='close')
+  .form-box.login
+    h2 Login
+    form(action='/login' method='post')
+      .input-box
+        span.icon
+          ion-icon(name='mail')
+        input(type='email' name='email' required='')
+        label Email
+      .input-box
+        span.icon
+          ion-icon(name='lock-closed')
+        input(type='password' name='password' required='')
+        label Password
+      button.btn(id="submit" type='submit' onClick='loginresult()') Login
+// HERO SECTION
+section#home.hero
+  h2
+    | Get your Documents
+    br
+    | Reviewed for Approval!
+  p
+    | Document review approval services for
+    br
+    | Saint Louis University.
+  a.ctas-button(href='#request') GET STARTED
+// REQUEST SECTION
+section#request.request
+  .row
+    h1 Request
+  .row
+    // COLUMN ONE
+    .column
+      .card
+        .icon-req
+          ion-icon(name='document-attach-outline')
+        h3 Upload Document
+        p
+          | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tristique, est vel tristique dignissim, eros
+          | dolor pharetra ipsum, id volutpat mauris velit et lorem. Morbi non efficitur libero.
+    // COLUMN TWO
+    .column
+      .card
+        .icon-req
+          ion-icon(name='add-circle-outline')
+        h3 Select Department
+        p
+          | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tristique, est vel tristique dignissim, eros
+          | dolor pharetra ipsum, id volutpat mauris velit et lorem. Morbi non efficitur libero.
+    // COLUMN THREE
+    .column
+      .card
+        .icon-req
+          ion-icon(name='checkmark-done-circle-outline')
+        h3 Approval Review
+        p
+          | Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tristique, est vel tristique dignissim, eros
+          | dolor pharetra ipsum, id volutpat mauris velit et lorem. Morbi non efficitur libero.
+// TRACKER SECTION
+section#tracker.tracker
+  h2 Tracker
+  .steps
+    .container.left-container
+      .icon-track
+        ion-icon(name='people-circle')
+      .text-box
+        h1 Approval of Request
+        small 1st step
+        p Your request was sent to the reviewers.
+        span.left-container-arrow
+    .container.right-container
+      .icon-track
+        ion-icon(name='people-circle')
+      .text-box
+        h1 Reviewed by Departments
+        small 2nd step
+        p Your request is still under review.
+        span.right-container-arrow
+    .container.left-container
+      .icon-track
+        ion-icon(name='people-circle')
+      .text-box
+        h1 Notified of Approval
+        small 3rd step
+        p Your request was successfully reviewed.
+        span.left-container-arrow
+// ABOUT US SECTION
+section#about-us.about-us
+  .text-box2
+    h2 About Us
+    img(src='/images/school.png')
+    p
+      | Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+      | Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+      | when an unknown printer took a galley of type and scrambled it to make a type
+      | specimen book. It has survived not only five centuries, but also the leap into
+      | electronic typesetting, remaining essentially unchanged. It was popularised
+      | in the 1960s with the release of Letraset sheets containing Lorem Ipsum
+      | passages, and more recently with desktop publishing software like Aldus
+      | PageMaker including versions of Lorem Ipsum.
+// FOOTER SECTION
+footer#contact
+  h2 Transerv - 9488AB - IT312/312L - 1st Semester AY 2023 - 2024
+  p
+    | IT Department
+    br
+    |     School of Accountancy, Management, Computing and Information Studies
+    br
+    |     Saint Louis University
+// CUSTOM JS
+script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+script(src='/javascripts/index.js')
