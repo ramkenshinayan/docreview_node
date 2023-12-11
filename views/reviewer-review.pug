@@ -64,7 +64,7 @@ html
         .profile-details
           img(src='/images/school.png' alt='')
           span.user_name
-            p(id='username')
+            p#username
           ion-icon.profile-icon(name='radio-button-on-outline')
       .home-content
         .overview
@@ -78,6 +78,11 @@ html
               br
               |  Document ID
               br
+              li.nav-link
+          a(action='/view')
+            ion-icon(name='checkbox-outline')
+            span.text.nav-text For Approval
+          iframe#docview(width='80%')
             // CUSTOM JS
             script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
             script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')

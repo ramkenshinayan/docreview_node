@@ -35,6 +35,12 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-
+// GET request history
+router.get('/history', (req, res) => {
+    // TODO approriate query
+    global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+        res.json();
+    });
+});
 
 module.exports = router;

@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var session = require('express-session');
-var mysql = require('mysql');
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
@@ -44,16 +42,18 @@ router.get('/total', (req, res) => {
     });
 });
 
-// router.get('/toreview', (req, res) => {
-//     global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
-//         res.send(result.length);
-//     });
-// });
+router.get('/toreview', (req, res) => {
+    // TODO approriate query
+    // global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+    //     res.send(String(result.length));
+    // });
+});
 
-// router.get('/overdue', (req, res) => {
-//     global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
-//         res.send(result.length);
-//     });
-// });
+router.get('/overdue', (req, res) => {
+    // TODO approriate query
+    // global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+    //     res.send(String(result.length));
+    // });
+});
 
 module.exports = router;
