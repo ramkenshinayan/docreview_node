@@ -11,11 +11,11 @@ fetch('/total')
 		document.getElementById('total').innerHTML = data;
 	});
 
-// fetch('/toreview')
-// 	.then(res => res.text())
-// 	.then(data => {
-// 		document.getElementById('toreview').innerHTML = data;
-// 	});
+fetch('/toreview')
+	.then(res => res.text())
+	.then(data => {
+		document.getElementById('toreview').innerHTML = data;
+	});
 
 // fetch('/overdue')
 // 	.then(res => res.text())

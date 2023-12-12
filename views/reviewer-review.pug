@@ -10,6 +10,8 @@ html
     // MAIN CSS
     link(href='/stylesheets/reviewer-home.css' rel='stylesheet')
     link(href='/stylesheets/reviewer-review.css' rel='stylesheet')
+    // WEBVIEW
+    script(src='/lib/webviewer.min.js')
   body
     // SIDE BAR
     nav.sidebar.close
@@ -71,18 +73,8 @@ html
           .title
             ion-icon.content-icon(name='bar-chart-outline')
             span.text For Approvals
-          .approvals
-            input#radioButton(type='radio' name='radioGroup')
-            label(for='radioButton')
-              | Document Name 
-              br
-              |  Document ID
-              br
-              li.nav-link
-          a(action='/view')
-            ion-icon(name='checkbox-outline')
-            span.text.nav-text For Approval
-          iframe#docview(width='80%')
+          #approvals
+      #viewer
             // CUSTOM JS
             script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
             script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')

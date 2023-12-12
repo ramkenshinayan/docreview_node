@@ -43,15 +43,14 @@ router.get('/total', (req, res) => {
 });
 
 router.get('/toreview', (req, res) => {
-    // TODO approriate query
-    // global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
-    //     res.send(String(result.length));
-    // });
+    global.conn.query('SELECT * FROM reviewtransaction WHERE status="pending"', (error, result) => {
+        res.send(String(result.length));
+    });
 });
 
 router.get('/overdue', (req, res) => {
     // TODO approriate query
-    // global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
+    // global.conn.query('SELECT * FROM reviewtransaction WHERE ', (error, result) => {
     //     res.send(String(result.length));
     // });
 });
