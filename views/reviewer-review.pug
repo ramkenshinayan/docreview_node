@@ -10,6 +10,8 @@ html
     // MAIN CSS
     link(href='/stylesheets/reviewer-home.css' rel='stylesheet')
     link(href='/stylesheets/reviewer-review.css' rel='stylesheet')
+    // WEBVIEW
+    script(src='/lib/webviewer.min.js')
   body
     // SIDE BAR
     nav.sidebar.close
@@ -64,20 +66,15 @@ html
         .profile-details
           img(src='/images/school.png' alt='')
           span.user_name
-            p(id='username')
+            p#username
           ion-icon.profile-icon(name='radio-button-on-outline')
       .home-content
         .overview
           .title
             ion-icon.content-icon(name='bar-chart-outline')
             span.text For Approvals
-          .approvals
-            input#radioButton(type='radio' name='radioGroup')
-            label(for='radioButton')
-              | Document Name 
-              br
-              |  Document ID
-              br
+          #approvals
+      #viewer
             // CUSTOM JS
             script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
             script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')

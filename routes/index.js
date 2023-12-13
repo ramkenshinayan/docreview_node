@@ -30,7 +30,12 @@ global.conn = connection;
 
 // GET homepage
 router.get('/', (req, res, next) => {
-  res.render('index');
+  // Check session
+  if (req.session.user) {
+    res.render('reviewer-home');
+  } else {
+    res.render('index');
+  }
 });
 
 // GET reviewer-home page
