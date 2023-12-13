@@ -35,8 +35,9 @@ router.post('/userDetails', (req, res) => {
 
 // POST documents
 // TODO query, should be the specified reviewer
-router.post('/forapproval', (req, res) => {
-    global.conn.query('SELECT * FROM document', (err, result) => {
+router.post('/forapproval/:reviewer', (req, res) => {
+    const { reviewer } = req.params;
+    global.conn.query('SELECT * FROM document WHERE email = ?', [reviewer], (err, result) => {
         res.json(result);
     });
 });
@@ -44,7 +45,7 @@ router.post('/forapproval', (req, res) => {
 // POST document blob
 router.post('/blobdoc/:docId', (req, res) => {
     const { docId } = req.params;
-    global.conn.query('SELECT content FROM document WHERE documentId = ?', [docId], async (err, result) => {
+    global.conn.query('SELECT * FROM document WHERE documentId = ?', [docId], (err, result) => {
         const docBlob = result[0].content;
         res.send(docBlob);
     });

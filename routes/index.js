@@ -32,7 +32,7 @@ global.conn = connection;
 router.get('/', (req, res, next) => {
   // Check session
   if (req.session.user) {
-    res.render('reviewer-home');
+    res.redirect('/reviewer-home');
   } else {
     res.render('index');
   }

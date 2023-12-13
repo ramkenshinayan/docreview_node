@@ -1,7 +1,8 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
-var docId = 0;
+var userEmail = '';
+var docId = 7;
 var docBlob = '';
 var docName = '';
 var docType = 'pdf';
@@ -10,20 +11,16 @@ fetch('/userDetails',  {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
+		userEmail = data.email;
 	});
 
 // TODO Select document
 // Return values from doc then populate:
-// function selectedDocDetails() {
-// 	docId = 
-// 	docName = 
-// 	docType = 
-// }
 function checkRadio() {
 	
 }
 
-fetch('/forapproval', {method: 'POST'})
+fetch(`/forapproval/${userEmail}`, {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
 		for (let i = 0; i < data.length; i++) {
