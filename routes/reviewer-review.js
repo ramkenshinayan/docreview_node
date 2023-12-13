@@ -22,7 +22,7 @@ router.get('/userDetails', (req, res) => {
 });
 
 // GET documents
-// TODO query
+// TODO query, should be the specified reviewer
 router.get('/forapproval', (req, res) => {
     global.conn.query('SELECT * FROM document', (err, result) => {
         res.json(result);
@@ -30,12 +30,10 @@ router.get('/forapproval', (req, res) => {
 });
 
 // GET blob
-// TODO documentId parameter
 router.get('/blobdoc/:docId', (req, res) => {
     const { docId } = req.params;
     global.conn.query('SELECT content FROM document WHERE documentId = ?', [docId], async (err, result) => {
         const docBlob = result[0].content;
-        res.contentType('application/pdf');
         res.send(docBlob);
     });
 });

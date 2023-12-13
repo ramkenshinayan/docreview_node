@@ -1,9 +1,10 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
-var docId = 10;
+var docId = 8;
 var docBlob = '';
 var docName = '';
+var docType = 'docx';
 
 fetch('/userDetails')
 	.then(res => res.json())
@@ -12,6 +13,13 @@ fetch('/userDetails')
 	});
 
 // TODO Select document
+// Return values from doc then populate:
+// function selectedDocDetails() {
+// 	docId = 
+// 	docName = 
+// 	docType = 
+// }
+
 fetch('/forapproval')
 	.then(res => res.json())
 	.then(data => {
@@ -25,11 +33,10 @@ fetch('/forapproval')
 			labelElement.setAttribute('for', 'radioButton' + i);
 
 			const labelText = document.createElement('div');
-			labelText.textContent = data[i].documentId +
-				data[i].fileName + data[i].version +
-				data[i].uploadDate + data[i].email;
+			labelText.textContent = data[i].documentId + ' ' +
+				data[i].fileName + ' ' + data[i].version + ' ' +
+				data[i].uploadDate + ' ' + data[i].email;
 
-			docName = data[i].fileName;
 			labelElement.appendChild(labelText);
 
 			container.appendChild(radioInput);
@@ -37,10 +44,10 @@ fetch('/forapproval')
 		}
 	});
 
-// TODO docId input
 fetch(`/blobdoc/${docId}`)
 	.then(res => res.blob())
 	.then(data => {
+		console.log(data)
 		docBlob = data;
 	})
 
@@ -50,7 +57,17 @@ WebViewer({
 	.then(instance => {
 		var annotManager = instance.docViewer.getAnnotationManager();
 		// Load the document blob
-		instance.loadDocument(docBlob, { filename: docName });
+		if (docType == 'docx') {
+			instance.loadDocument(docBlob, {
+				filename: docName,
+				extension: 'docx'
+			});
+		} else if (docType == 'pdf') {
+			instance.loadDocument(docBlob, {
+				filename: docName,
+				extension: 'pdf'
+			});
+		}
 
 		// Add a save button on header
 		instance.setHeaderItems(function (header) {
