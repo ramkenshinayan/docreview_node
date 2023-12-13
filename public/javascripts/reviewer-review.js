@@ -1,7 +1,7 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
-var docId = 0;
+var docId = 10;
 var docBlob = '';
 var docName = '';
 
@@ -37,6 +37,7 @@ fetch('/forapproval')
 		}
 	});
 
+// TODO docId input
 fetch(`/blobdoc/${docId}`)
 	.then(res => res.blob())
 	.then(data => {

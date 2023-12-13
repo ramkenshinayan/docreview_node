@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const fs = require('fs');
-const { PDFNet } = require('@pdftron/pdfnet-node');
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
@@ -31,11 +29,11 @@ router.get('/forapproval', (req, res) => {
     });
 });
 
-// GET blob to pdf
+// GET blob
 // TODO documentId parameter
 router.get('/blobdoc/:docId', (req, res) => {
     const { docId } = req.params;
-    global.conn.query('SELECT * FROM document WHERE documentId = 0', [docId], async (err, result) => {
+    global.conn.query('SELECT content FROM document WHERE documentId = ?', [docId], async (err, result) => {
         const docBlob = result[0].content;
         res.contentType('application/pdf');
         res.send(docBlob);
