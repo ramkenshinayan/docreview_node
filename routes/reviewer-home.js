@@ -3,17 +3,29 @@ var router = express.Router();
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
-    res.render('reviewer-home');
+    if (req.session.user) {
+        res.render('reviewer-home');
+    } else {
+        res.render('index');
+    }
 });
 
 // GET reviewer-view page
 router.get('/reviewer-view', (req, res, next) => {
-    res.render('reviewer-view');
+    if (req.session.user) {
+        res.render('reviewer-view');
+    } else {
+        res.render('index');
+    }
 });
 
 // GET reviewer-add page
 router.get('/reviewer-review', (req, res, next) => {
-    res.render('reviewer-review');
+    if (req.session.user) {
+        res.render('reviewer-review');
+    } else {
+        res.render('index');
+    }
 });
 
 // GET user details

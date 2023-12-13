@@ -3,34 +3,46 @@ var router = express.Router();
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
-    res.render('reviewer-home');
+    if (req.session.user) {
+        res.render('reviewer-home');
+    } else {
+        res.render('index');
+    }
 });
 
 // GET reviewer-view page
 router.get('/reviewer-view', (req, res, next) => {
-    res.render('reviewer-view');
+    if (req.session.user) {
+        res.render('reviewer-view');
+    } else {
+        res.render('index');
+    }
 });
 
-// GET reviewer-review page
+// GET reviewer-add page
 router.get('/reviewer-review', (req, res, next) => {
-    res.render('reviewer-review');
+    if (req.session.user) {
+        res.render('reviewer-review');
+    } else {
+        res.render('index');
+    }
 });
 
-// GET user details
-router.get('/userDetails', (req, res) => {
+// POST user details
+router.post('/userDetails', (req, res) => {
     res.send(req.session.user);
 });
 
-// GET documents
+// POST documents
 // TODO query, should be the specified reviewer
-router.get('/forapproval', (req, res) => {
+router.post('/forapproval', (req, res) => {
     global.conn.query('SELECT * FROM document', (err, result) => {
         res.json(result);
     });
 });
 
-// GET blob
-router.get('/blobdoc/:docId', (req, res) => {
+// POST document blob
+router.post('/blobdoc/:docId', (req, res) => {
     const { docId } = req.params;
     global.conn.query('SELECT content FROM document WHERE documentId = ?', [docId], async (err, result) => {
         const docBlob = result[0].content;

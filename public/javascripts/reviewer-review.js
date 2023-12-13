@@ -1,12 +1,12 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
-var docId = 8;
+var docId = 0;
 var docBlob = '';
 var docName = '';
-var docType = 'docx';
+var docType = 'pdf';
 
-fetch('/userDetails')
+fetch('/userDetails',  {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
@@ -19,8 +19,11 @@ fetch('/userDetails')
 // 	docName = 
 // 	docType = 
 // }
+function checkRadio() {
+	
+}
 
-fetch('/forapproval')
+fetch('/forapproval', {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
 		for (let i = 0; i < data.length; i++) {
@@ -44,7 +47,7 @@ fetch('/forapproval')
 		}
 	});
 
-fetch(`/blobdoc/${docId}`)
+fetch(`/blobdoc/${docId}`, {method: 'POST'})
 	.then(res => res.blob())
 	.then(data => {
 		console.log(data)
