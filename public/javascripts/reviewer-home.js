@@ -17,8 +17,8 @@ fetch('/toreview')
 		document.getElementById('toreview').innerHTML = data;
 	});
 
-// fetch('/overdue')
-// 	.then(res => res.text())
-// 	.then(data => {
-// 		document.getElementById('overdue').innerHTML = data;
-// 	});
+fetch('/overdue')
+	.then(res => res.text())
+	.then(data => {
+		document.getElementById('overdue').innerHTML = data;
+	});

@@ -49,22 +49,21 @@ router.get('/logout', (req, res) => {
 
 // GET count documents
 router.get('/total', (req, res) => {
-    global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
-        res.send(String(result.length));
+    global.conn.query(`SELECT COUNT(*) AS total FROM reviewtransaction rt JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE rs.email = '${req.session.user.email}'`, (error, result) => {
+        res.send(String(result[0].total));
     });
 });
 
 router.get('/toreview', (req, res) => {
-    global.conn.query('SELECT * FROM reviewtransaction WHERE status="pending"', (error, result) => {
-        res.send(String(result.length));
+    global.conn.query(`SELECT  COUNT(*) AS total FROM reviewtransaction rt JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE (rt.status = 'ongoing' OR rt.status = 'standby') AND rs.email = '${req.session.user.email}'`, (error, result) => {
+        res.send(String(result[0].total));
     });
 });
 
 router.get('/overdue', (req, res) => {
-    // TODO approriate query
-    // global.conn.query('SELECT * FROM reviewtransaction WHERE ', (error, result) => {
-    //     res.send(String(result.length));
-    // });
+    global.conn.query(`SELECT COUNT(*) AS total FROM document d JOIN reviewtransaction rt ON d.documentId = rt.documentId JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE d.uploadDate < NOW() - INTERVAL 1 WEEK AND rs.email = '${req.session.user.email}'`, (error, result) => {
+        res.send(String(result[0].total));
+    });
 });
 
 module.exports = router;
