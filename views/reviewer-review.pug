@@ -74,17 +74,18 @@ html
             ion-icon.content-icon(name='bar-chart-outline')
             span.text For Approvals
           form#approvals(method='POST')
-          .buttons
-            button#approveBtn Approve Document
-            #approveWrap.hidden
-              p
-                | Approve this document?
-                span
-                  button#updateA Approve
-            button#disapproveBtn Dispprove Document
-            #disapproveWrap.hidden
       #viewer
-            // CUSTOM JS
-            script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
-            script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
-            script(src='/javascripts/reviewer-review.js')
+      .buttons
+        button#approveBtn Approve Document
+        #approveWrap.hidden
+          p
+            | Approve this document?
+            span
+              button#updateA Approve
+        button#disapproveBtn Dispprove Document
+        #disapproveWrap.hidden
+      
+    // CUSTOM JS
+    script(type='module' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js')
+    script(nomodule='' src='https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js')
+    script(src='/javascripts/reviewer-review.js')

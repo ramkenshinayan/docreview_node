@@ -1,25 +1,25 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
-const approveBtn = document.getElementById("approveBtn");
-const approveWrap = document.getElementById("approveWrap");
-const disapproveBtn = document.getElementById("disapproveBtn");
-const disapproveWrap = document.getElementById("disapproveWrap");
-const updateA = document.getElementById("updateA");
-var userEmail = '';
-var docId = 7;
+const approveBtn = document.getElementById('approveBtn');
+const approveWrap = document.getElementById('approveWrap');
+const disapproveBtn = document.getElementById('disapproveBtn');
+const disapproveWrap = document.getElementById('disapproveWrap');
+const updateA = document.getElementById('updateA');
 var docBlob = '';
+var docId = 0;
 var docName = '';
-var docType = 'pdf';
+var docType = '';
+
+approveBtn.disabled = true;
+disapproveBtn.disabled = true;
 
 fetch('/userDetails',  {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
-		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
-		userEmail = data.email;
+		document.getElementById('username').innerHTML = data.firstName + ' ' + data.lastName;
 	});
 
-// TODO
 fetch('/forapproval', {method: 'POST'})
 	.then(res => res.json())
 	.then(data => {
@@ -43,9 +43,6 @@ fetch('/forapproval', {method: 'POST'})
 			container.appendChild(labelElement);
 		}
 	});
-
-approveBtn.disabled = true;
-disapproveBtn.disabled = true;
 	
 function checkRadio() {
 	container.addEventListener('change', function (event) {
@@ -62,23 +59,27 @@ function checkRadio() {
 		}
 	});
 }
-approveBtn.addEventListener("click", () => {
-	approveWrap.classList.toggle("hidden");
+
+//TODO
+container.addEventListener('click', () => {
+
 });
 
-disapproveBtn.addEventListener("click", () => {
-	disapproveWrap.classList.toggle("hidden");
+approveBtn.addEventListener('click', () => {
+	approveWrap.classList.toggle('hidden');
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-	updateA.action = window.location.href + "/approve"; 
+disapproveBtn.addEventListener('click', () => {
+	disapproveWrap.classList.toggle('hidden');
 });
-		
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function() {
+	updateA.action = window.location.href + '/approve'; 
+});
+
+document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
-
 
 fetch(`/blobdoc/${docId}`, {method: 'POST'})
 	.then(res => res.blob())
@@ -106,17 +107,15 @@ WebViewer({
 		}
 
 		// Add a save button on header
-		instance.setHeaderItems(function (header) {
+		instance.setHeaderItems((header) => {
 			header.push({
 				type: 'actionButton',
 				img: '<svg id="annobtn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
-				onClick: function () {
+				onClick: () => {
 					// Save annotations when button is clicked
 					// widgets and links will remain in the document without changing so it isn't necessary to export them
 					annotManager.exportAnnotations({ links: false, widgets: false }).then(function (xfdfString) {
-						saveXfdfString(DOCUMENT_ID, xfdfString).then(function () {
-							alert('Annotations saved successfully.');
-						});
+						console.log(xfdfString);
 					});
 				}
 			});
