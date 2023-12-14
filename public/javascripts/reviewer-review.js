@@ -1,6 +1,11 @@
 const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
 const container = document.getElementById('approvals');
+const approveBtn = document.getElementById("approveBtn");
+const approveWrap = document.getElementById("approveWrap");
+const disapproveBtn = document.getElementById("disapproveBtn");
+const disapproveWrap = document.getElementById("disapproveWrap");
+const updateA = document.getElementById("updateA");
 var userEmail = '';
 var docId = 7;
 var docBlob = '';
@@ -39,7 +44,9 @@ fetch('/forapproval', {method: 'POST'})
 		}
 	});
 
-
+approveBtn.disabled = true;
+disapproveBtn.disabled = true;
+	
 function checkRadio() {
 	container.addEventListener('change', function (event) {
 		const selectedRadioButton = event.target;
@@ -50,9 +57,23 @@ function checkRadio() {
 
 			let queryString = `${encodeURIComponent(documentName)}&`;
 			history.pushState({}, null, `?${queryString}`);
+			approveBtn.disabled = false;
+			disapproveBtn.disabled = false;
 		}
 	});
 }
+approveBtn.addEventListener("click", () => {
+	approveWrap.classList.toggle("hidden");
+});
+
+disapproveBtn.addEventListener("click", () => {
+	disapproveWrap.classList.toggle("hidden");
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+	updateA.action = window.location.href + "/approve"; 
+});
+		
 
 document.addEventListener("DOMContentLoaded", function () {
 	checkRadio();

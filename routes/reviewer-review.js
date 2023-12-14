@@ -45,6 +45,20 @@ router.post('/forapproval', (req, res) => {
     });
 });
 
+router.get('/approve', (req, res) => {
+    const encodedData = req.body.encodedData;
+    const documentName = decodeURIComponent(encodedData);
+
+    global.conn.query(`SELECT rs.sequenceOrder, d.documentId FROM document AS d 
+        JOIN reviewtransaction AS rt ON rt.documentId = d.documentId 
+        LEFT JOIN reviewsequence AS rs ON rs.reviewId = rt.reviewId WHERE rs.email = '${req.session.user.email}' AND d.fileName = '${documentName}'`, (err, result) => {
+            const documentId = result[0].documentId;
+            const sequence = result[0].sequenceOrder;
+        global.conn.query(`UPDATE review transaction SET status = 'Approved' WHERE documentid = '${documentId}' 
+        AND email = '${req.session.user.email}' AND sequenceOrder = '${sequence}'`);
+    });
+})
+
 // POST document blob
 router.post('/blobdoc/:docId', (req, res) => {
     const { docId } = req.params;
