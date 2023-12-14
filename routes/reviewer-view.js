@@ -1,12 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
-var http = require('http');
-var url = require('url');
 
 router.use(express.urlencoded({ extended: true }));
 
-//database
+// Database
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -32,7 +30,21 @@ router.get('/reviewer-view', (req, res, next) => {
     }
 });
 
-//GET list of transactions
+// GET reviewer-add page
+router.get('/reviewer-review', (req, res, next) => {
+    if (req.session.user) {
+        res.render('reviewer-review');
+    } else {
+        res.render('index');
+    }
+});
+
+// GET user details
+router.post('/userDetails', (req, res) => {
+    res.send(req.session.user);
+});
+
+// GET list of transactions
 router.get('/history', (req, res) => {
     try {
         pool.getConnection((err, connection) => {
@@ -63,7 +75,7 @@ router.get('/history', (req, res) => {
     }
 });
 
-//GET filter, sort, and -
+// GET filter and sort
 router.get('/and', (req, res) => {
     try {
         pool.getConnection((err, connection) => {
@@ -121,20 +133,6 @@ router.get('/and', (req, res) => {
     }
 });
 
-// GET reviewer-add page
-router.get('/reviewer-review', (req, res, next) => {
-    if (req.session.user) {
-        res.render('reviewer-review');
-    } else {
-        res.render('index');
-    }
-});
-
-// GET user details
-router.post('/userDetails', (req, res) => {
-    res.send(req.session.user);
-});
-
 // GET logout
 router.get('/logout', (req, res) => {
     const email = req.session.user.email;
@@ -147,14 +145,6 @@ router.get('/logout', (req, res) => {
 
     req.session.destroy();
     res.redirect('/');
-});
-
-// GET request history
-router.post('/history', (req, res) => {
-    // TODO approriate query
-    global.conn.query('SELECT * FROM reviewtransaction', (error, result) => {
-        res.json();
-    });
 });
 
 module.exports = router;
