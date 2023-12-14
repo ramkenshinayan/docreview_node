@@ -33,11 +33,12 @@ router.post('/userDetails', (req, res) => {
     res.send(req.session.user);
 });
 
+// TODO make it so that the documents are only for the current reviewer
 // POST documents
 // TODO query, should be the specified reviewer
-router.post('/forapproval/:reviewer', (req, res) => {
+router.post('/forapproval', (req, res) => {
     const { reviewer } = req.params;
-    global.conn.query('SELECT * FROM document WHERE email = ?', [reviewer], (err, result) => {
+    global.conn.query('SELECT * FROM document', (err, result) => {
         res.json(result);
     });
 });
