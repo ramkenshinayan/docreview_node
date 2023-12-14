@@ -53,6 +53,7 @@ router.post('/login', (req, res) => {
     // if result exists, else, prompt invalid email or password
     if (result.length > 0) {
       // if user status is not Online, else, prompt user is already logged in
+      console.log(result[0].status);
       if (result[0].status != 'Online') {
         // Login Successful
         // Set session variables
@@ -63,29 +64,29 @@ router.post('/login', (req, res) => {
           role: result[0].role
         };
         // Make user Online
-        global.conn.query('UPDATE users SET status="Online" WHERE email= ?', [email], (error, result) => {
+        global.conn.query('UPDATE users SET status="Online" WHERE email= ?', [result[0].email], (error, result) => {
           // prompt on error
           if (error) {
             console.error(error);
           }
         });
-        console.log('Log in successful.');
-        res.redirect('/reviewer-home');
-        loginResult = 'success';
+        console.log('Logged in successfully.');
+        res.render('reviewer-home', {
+          type: 'success',
+          message: 'Logged in successfully.'});
       } else {
         console.log('User is already logged in.');
-        loginResult = 'logged';
+        res.render('index', {
+          type: 'logged',
+          message: 'User is already logged in.'});
       }
     } else {
       console.log('Invalid email or password.');
-      loginResult = 'invalid';
+      res.render('index', {
+        type: 'invalid',
+        message: 'Invalid email or password.'});
     }
   });
-});
-
-// GET login result
-router.get('/loginresult', (req, res) => {
-  res.send(loginResult);
 });
 
 module.exports = router;
