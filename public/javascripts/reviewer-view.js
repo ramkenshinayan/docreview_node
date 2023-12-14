@@ -19,9 +19,23 @@ fetch('/userDetails')
 	});
 
 fetch('/history')
-	.then(res => res.json())
-	.then(data => {
+	.then(response => {
+	if (!response.ok) {
+		throw new Error(`Network response was not ok (Status: ${response.status}, ${response.statusText})`);
+	}
 
+	const contentType = response.headers.get('content-type');
+	if (!contentType || !contentType.includes('application/json')) {
+		throw new Error('Response is not in JSON format');
+	}
+
+	return response.clone().json();
+	})
+	.then(data => {
+		updateReviews(data);
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
 	});
 
 //EXPAND SORT
@@ -43,7 +57,6 @@ function toggleActive() {
 	}
 }
 
-
 //SORT CHANGE
 sortBtn.addEventListener("click", () => {
 	sortBtn.classList.toggle("open");
@@ -56,16 +69,16 @@ filterBtn.addEventListener("click", () => {
 
 //SORT SELECTION
 sortAll.forEach(option => {
-	option.addEventListener("click", () => { changeIcon(option, sortBtn) })
+	option.addEventListener("click", () => {changeIcon(option, sortBtn)})
 });
 
 //FILTER SELECTION
 filterAll.forEach(option => {
-	option.addEventListener("click", () => { changeIcon(option, filterBtn) })
+	option.addEventListener("click", () => {changeIcon(option, filterBtn)})
 });
 
 //Function for 
-function changeIcon(option, button) {
+function changeIcon(option, button){
 	let selected = option.innerText;
 	button.innerText = selected;
 
@@ -74,7 +87,6 @@ function changeIcon(option, button) {
 		existingIcon.remove();
 	}
 
-	// add icon
 	const iconSpan = document.createElement('span');
 	iconSpan.className = 'icon';
 
@@ -85,28 +97,28 @@ function changeIcon(option, button) {
 	sortBtn.appendChild(iconSpan);
 }
 
+function fetchDataFromUrl() {
+	const queryParams = new URLSearchParams(window.location.search);
+	const filterParams = queryParams.getAll('filter');
+	const sortParam = queryParams.get('sort');
+
+	applyFilterAndSort(filterParams, sortParam);
+}
+
 //filtered
 filterItems.forEach(item => {
 	item.addEventListener("click", () => {
 		item.classList.toggle("selected");
-		document.querySelectorAll(" .filter-items.selected");
+
+		const selectedFilters = document.querySelectorAll(".filter-items.selected");
+		const selectedFilterValues = Array.from(selectedFilters).map(filter => filter.innerText);
+
+		const selectedSort = document.querySelector(".sort-select .sort-items.selected");
+		const selectedSortValue = selectedSort ? selectedSort.innerText : null;
+
+		applyFilterAndSort(selectedFilterValues, selectedSortValue);
 	});
 });
-
-function applyFilter() {
-	const selectedFilter = document.querySelector(".filter-select .filter-items.selected");
-	const filterValue = selectedFilter ? selectedFilter.innerText : null;
-
-	if (filterValue) {
-		fetch(`/data?filter=${encodeURIComponent(filterValue)}`)
-			.then(response => response.json())
-			.then(data => {
-				updateReviews(data.reviews);
-			})
-			.catch(error => console.error('Error fetching data:', error));
-	}
-}
-
 
 //sorted
 sortItems.forEach(item => {
@@ -118,36 +130,38 @@ sortItems.forEach(item => {
 		});
 
 		item.classList.toggle("selected");
+		const selectedSortValue = item.textContent.trim();
 
-		const selectedItem = document.querySelector(".sort-select .sort-items.selected");
+		const selectedFilters = document.querySelectorAll(".filter-items.selected");
+		const selectedFilterValues = Array.from(selectedFilters).map(filter => filter.innerText);
 
-		if (selectedItem) {
-			changeIcon(selectedItem, sortBtn);
-		}
-
-		document.querySelectorAll(".sort-select .sort-items.selected");
-
+		applyFilterAndSort(selectedFilterValues, selectedSortValue);
 	});
 });
 
-function applySort() {
-	const selectedSort = document.querySelector(".sort-select .sort-items.selected");
-	const sortValue = selectedSort ? selectedSort.innerText : null;
+function applyFilterAndSort(selectedFilterValues, selectedSortValue) {
+	const filterParams = selectedFilterValues.map(value => `filter=${encodeURIComponent(value)}`).join('&');
+	const sortParam = selectedSortValue ? `sort=${encodeURIComponent(selectedSortValue)}` : '';
 
-	if (sortValue) {
-		fetch(`/data?sort=${encodeURIComponent(sortValue)}`)
-			.then(response => response.json())
-			.then(data => {
-				updateReviews(data.reviews);
-			})
-			.catch(error => console.error('Error fetching data:', error));
-	}
+	const queryParams = [filterParams, sortParam].filter(Boolean).join('&');
+	const newUrl = `${window.location.pathname}?${queryParams}`;
+
+	history.pushState(null, null, newUrl);
+
+	fetch(`/and?${queryParams}`)
+		.then(response => response.json())
+		.then(data => {
+			updateReviews(data);
+		})
+		.catch(error => console.error('Error fetching data:', error));
 }
+document.addEventListener('DOMContentLoaded', () => {
+	fetchDataFromUrl();
+});
 
-//update content
 function updateReviews(reviews) {
 	const reviewsContainer = document.querySelector('.history');
-	reviewsContainer.innerHTML = '';
+	reviewsContainer.innerHTML = ''; 
 
 	if (reviews && reviews.length > 0) {
 		reviews.forEach(review => {
@@ -195,4 +209,3 @@ function updateReviews(reviews) {
 		reviewsContainer.innerHTML = '<p>No reviews available</p>';
 	}
 }
-
