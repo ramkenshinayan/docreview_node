@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+var http = require('http');
+var url = require('url');
+
+router.use(express.urlencoded({ extended: true }));
 
 //database
 const pool = mysql.createPool({

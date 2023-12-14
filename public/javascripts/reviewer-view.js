@@ -11,7 +11,7 @@ const sort = document.querySelector(".sort-box"),
 	filterItems = document.querySelectorAll(".filter-items"),
 
 	documentName = document.querySelector(".name");
-
+	
 fetch('/userDetails')
 	.then(res => res.json())
 	.then(data => {
@@ -60,11 +60,9 @@ function toggleActive() {
 //SORT CHANGE
 sortBtn.addEventListener("click", () => {
 	sortBtn.classList.toggle("open");
-	applySort();
 });
 filterBtn.addEventListener("click", () => {
 	filterBtn.classList.toggle("open");
-	applyFilter();
 });
 
 //SORT SELECTION
