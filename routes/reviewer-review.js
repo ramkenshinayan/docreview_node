@@ -38,7 +38,9 @@ router.post('/userDetails', (req, res) => {
 // TODO query, should be the specified reviewer
 router.post('/forapproval', (req, res) => {
     const { reviewer } = req.params;
-    global.conn.query('SELECT * FROM document', (err, result) => {
+    global.conn.query(`SELECT d.fileName, d.documentId, rs.email FROM document AS d 
+    JOIN reviewtransaction AS rt ON rt.documentId = d.documentId 
+    LEFT JOIN reviewsequence AS rs ON rs.reviewId = rt.reviewId WHERE rs.email = '${req.session.user.email}' `, (err, result) => {
         res.json(result);
     });
 });

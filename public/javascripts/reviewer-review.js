@@ -14,12 +14,6 @@ fetch('/userDetails',  {method: 'POST'})
 		userEmail = data.email;
 	});
 
-// TODO Select document
-// Return values from doc then populate:
-function checkRadio() {
-	
-}
-
 // TODO
 fetch('/forapproval', {method: 'POST'})
 	.then(res => res.json())
@@ -34,9 +28,9 @@ fetch('/forapproval', {method: 'POST'})
 			labelElement.setAttribute('for', 'radioButton' + i);
 
 			const labelText = document.createElement('div');
-			labelText.textContent = data[i].documentId + ' ' +
-				data[i].fileName + ' ' + data[i].version + ' ' +
-				data[i].uploadDate + ' ' + data[i].email;
+			labelText.appendChild(document.createTextNode(data[i].fileName));
+			labelText.appendChild(document.createElement('br'));
+			labelText.appendChild(document.createTextNode(data[i].documentId));
 
 			labelElement.appendChild(labelText);
 
@@ -44,6 +38,26 @@ fetch('/forapproval', {method: 'POST'})
 			container.appendChild(labelElement);
 		}
 	});
+
+
+function checkRadio() {
+	container.addEventListener('change', function (event) {
+		const selectedRadioButton = event.target;
+		if (selectedRadioButton.type === 'radio' && selectedRadioButton.checked) {
+			const labelContent = document.querySelector(`label[for="${selectedRadioButton.id}"]`).innerText;
+			
+			const documentName = labelContent.split('\n')[0].trim();
+
+			let queryString = `${encodeURIComponent(documentName)}&`;
+			history.pushState({}, null, `?${queryString}`);
+		}
+	});
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+	checkRadio();
+});
+
 
 fetch(`/blobdoc/${docId}`, {method: 'POST'})
 	.then(res => res.blob())

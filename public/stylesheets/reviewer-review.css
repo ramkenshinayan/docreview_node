@@ -20,15 +20,8 @@
 	--tran-05: all 0.5s ease;
 }
 
-.approvals {
-    width: 30%;
-    height: 95%;
-    background-color: var(--primary-color-light);
-	border-radius: 20px;
-	border: none;
-}
 
-.approvals {
+#approvals {
 	background-color: var(--primary-color-light);
 	border-top: 1px solid #DDDDDD;
     border-bottom: 1px solid #DDDDDD;
@@ -36,9 +29,13 @@
 	color: var(--text-color);
 	font-size: 12px;
 	left: -1px;
-	padding: 10px;
-	height:500px;
+	padding: 10px 0 7px 5px;
+	height:720px;
 	overflow-y: auto;
+	width: 27%;
+	float: left;
+	border: none;
+	margin-bottom: 20px;
 }
 
 input[type="radio"] {
@@ -60,6 +57,8 @@ label {
 }
 
 #viewer {
-	width: 95%; 
-	height: 90%;
+	width: 71.1%; 
+	height: 100%;
+	float: right;
+	margin-bottom: 20px;
 }
