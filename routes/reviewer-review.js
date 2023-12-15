@@ -80,6 +80,20 @@ router.post('/typedoc/:docId', (req, res) => {
     });
 });
 
+router.post('/setAnnot', (req, res) => {
+    // TODO query to save xfdf(blob) to comments table
+    console.log(req.body.xfdfData);
+    console.log(req.body.docId);
+    res.send(req.body.xfdfData);
+});
+
+router.post('/getAnnot', (req, res) => {
+    // TODO query to obtain xfdf(blob) from comments table
+    console.log(req.body.xfdfData);
+    console.log(req.body.docId);
+    res.send(req.body.xfdfData);
+});
+
 // GET logout
 router.get('/logout', (req, res) => {
     const email = req.session.user.email;
