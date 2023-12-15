@@ -1,34 +1,38 @@
-const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
+const updateA = document.getElementById('updateA');
+const docList = document.getElementById('approvals');
 const container = document.getElementById('approvals');
 const approveBtn = document.getElementById('approveBtn');
 const disapproveBtn = document.getElementById('disapproveBtn');
 const disapproveWrap = document.getElementById('disapproveWrap');
+const radioItem = document.getElementsByName('radioGroup');
+var docId = 1;
 var docBlob = '';
-var docId = 0;
 var docName = '';
 var docType = '';
+let webViewer;
 
 approveBtn.disabled = true;
 disapproveBtn.disabled = true;
 
-fetch('/userDetails',  {method: 'POST'})
+fetch('/userDetails', { method: 'POST' })
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + ' ' + data.lastName;
 	});
 
-fetch('/forapproval', {method: 'POST'})
+fetch('/forapproval', { method: 'POST' })
 	.then(res => res.json())
 	.then(data => {
 		for (let i = 0; i < data.length; i++) {
 			const radioInput = document.createElement('input');
 			radioInput.setAttribute('type', 'radio');
-			radioInput.setAttribute('id', 'radioButton' + i);
+			radioInput.setAttribute('id', data[i].documentId);
 			radioInput.setAttribute('name', 'radioGroup');
+			radioInput.setAttribute('onCLick', 'getId(this)');
 
 			const labelElement = document.createElement('label');
-			labelElement.setAttribute('for', 'radioButton' + i);
+			labelElement.setAttribute('for', data[i].documentId);
 
 			const labelText = document.createElement('div');
 			labelText.appendChild(document.createTextNode(data[i].fileName));
@@ -41,13 +45,13 @@ fetch('/forapproval', {method: 'POST'})
 			container.appendChild(labelElement);
 		}
 	});
-	
+
 function checkRadio() {
 	container.addEventListener('change', function (event) {
 		const selectedRadioButton = event.target;
 		if (selectedRadioButton.type === 'radio' && selectedRadioButton.checked) {
 			const labelContent = document.querySelector(`label[for="${selectedRadioButton.id}"]`).innerText;
-			
+
 			const documentName = labelContent.split('\n')[0].trim();
 
 			let queryString = `${encodeURIComponent(documentName)}&`;
@@ -58,64 +62,87 @@ function checkRadio() {
 	});
 }
 
-//TODO
-container.addEventListener('click', () => {
+function getId(radio) {
+	docId = radio.id;
+	let docBlob, docType;
 
-});
+	const fetchDocBlob = fetch(`/blobdoc/${docId}`, { method: 'POST' })
+		.then(res => res.blob())
+		.then(data => {
+			docBlob = data;
+		});
+
+	const fetchDocType = fetch(`/typedoc/${docId}`, { method: 'POST' })
+		.then(res => res.text())
+		.then(data => {
+			docType = data;
+		});
+
+	Promise.all([fetchDocBlob, fetchDocType]).then(() => {
+		webViewer.loadDocument(docBlob, {
+			filename: docName,
+			extension: docType
+		});
+	});
+}
+
+function setAnnot() {
+	const { annotManager } = webViewer;
+	const xfdfData = annotManager.exportAnnotations({ links: false, widgets: false });
+	console.log('XFDF data:', JSON.parse(xfdfData));
+	fetch('/setAnnot', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ xfdfData, docId }),
+	})
+		.then(response => {
+			if (response.ok) {
+				console.log('XFDF data sent successfully');
+			} else {
+				console.error('Failed to send XFDF data');
+			}
+		})
+}
 
 approveBtn.addEventListener('click', () => {
-	approveWrap.classList.toggle('hidden');
+	// approveWrap.classList.toggle('hidden');
+	setAnnot();
 });
 
 disapproveBtn.addEventListener('click', () => {
-	disapproveWrap.classList.toggle('hidden');
+	// disapproveWrap.classList.toggle('hidden');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-	updateA.action = window.location.href + '/approve'; 
+document.addEventListener('DOMContentLoaded', function () {
+	// updateA.action = window.location.href + '/approve';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
 
-fetch(`/blobdoc/${docId}`, {method: 'POST'})
-	.then(res => res.blob())
-	.then(data => {
-		console.log(data)
-		docBlob = data;
-	})
-
 WebViewer({
 	path: '../lib'
 }, viewer)
 	.then(instance => {
-		var annotManager = instance.docViewer.getAnnotationManager();
-		// Load the document blob
-		if (docType == 'docx') {
-			instance.loadDocument(docBlob, {
-				filename: docName,
-				extension: 'docx'
-			});
-		} else if (docType == 'pdf') {
-			instance.loadDocument(docBlob, {
-				filename: docName,
-				extension: 'pdf'
-			});
-		}
+		webViewer = instance;
+		const { annotManager } = instance;
 
-		// Add a save button on header
-		instance.setHeaderItems((header) => {
-			header.push({
-				type: 'actionButton',
-				img: '<svg id="annobtn" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>',
-				onClick: () => {
-					// Save annotations when button is clicked
-					// widgets and links will remain in the document without changing so it isn't necessary to export them
-					annotManager.exportAnnotations({ links: false, widgets: false }).then(function (xfdfString) {
-						console.log(xfdfString);
+		fetch('/getAnnot')
+			.then(response => response.json())
+			.then(data => {
+				const xfdfData = data.xfdf;
+				annotManager.importAnnotations(xfdfData)
+					.then(() => {
+						console.log('XFDF data loaded successfully');
+					})
+					.catch(error => {
+						console.error('Error loading XFDF data:', error);
 					});
-				}
+			})
+			.catch(error => {
+				console.error('Error fetching XFDF data:', error);
 			});
-		});
 	});
