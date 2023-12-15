@@ -44,16 +44,18 @@ router.post('/forapproval', (req, res) => {
     });
 });
 
-router.get('/approve', (req, res) => {
-    const encodedData = req.body.encodedData;
-    const documentName = decodeURIComponent(encodedData);
+router.post('/approve/:docId', (req, res) => {
+    const { docId } = req.params;
+    const userEmail = req.session.user.email;
+    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail])
+})
 
-    global.conn.query(`SELECT d.documentId FROM document AS d JOIN reviewtransation AS rt 
-    ON d.documentId = rt.documentId WHERE rt.email = '${req.session.user.email}' AND d.fileName = '${documentName}'`, (err, result) => {
-        const documentId = result[0].documentId;
-        const sequence = result[0].sequenceOrder;
-        global.conn.query(`UPDATE reviewtransaction SET status = 'Approved' WHERE documentid = '${documentId}'AND email = '${req.session.user.email}'`);
-    });
+router.post('/disapprove/:docId', (req, res) => {
+    const { docId } = req.params.docId;
+    const userEmail = req.session.user.email;
+    const content = req.params.content;
+    global.conn.query('UPDATE comments SET content = ? WHERE documentId = ? AND email = ?', [content, docId, userEmail])
+    global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail])
 })
 
 // POST document blob
