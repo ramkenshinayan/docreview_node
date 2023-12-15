@@ -32,7 +32,7 @@ global.conn = connection;
 router.get('/', (req, res, next) => {
   // Check session
   if (req.session.user) {
-    res.redirect('/reviewer-home');
+    res.render('reviewer-home');
   } else {
     res.render('index');
   }
@@ -40,7 +40,11 @@ router.get('/', (req, res, next) => {
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
-  res.render('reviewer-home');
+  if (req.session.user) {
+    res.render('reviewer-home');
+  } else {
+    res.render('index');
+  }
 });
 
 // POST login
