@@ -68,6 +68,18 @@ router.post('/blobdoc/:docId', (req, res) => {
     });
 });
 
+// POST document type
+router.post('/typedoc/:docId', (req, res) => {
+    const { docId } = req.params;
+    global.conn.query('SELECT * FROM document WHERE documentId = ?', [docId], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: 'Document ID not found in the server' });
+        }
+        const docType = result[0].fileType;
+        res.send(docType);
+    });
+});
+
 // GET logout
 router.get('/logout', (req, res) => {
     const email = req.session.user.email;

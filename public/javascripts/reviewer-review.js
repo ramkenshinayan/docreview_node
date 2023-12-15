@@ -1,55 +1,58 @@
-const docList = document.getElementById('approvals');
 const viewer = document.getElementById('viewer');
+const updateA = document.getElementById('updateA');
+const docList = document.getElementById('approvals');
 const container = document.getElementById('approvals');
 const approveBtn = document.getElementById('approveBtn');
 const approveWrap = document.getElementById('approveWrap');
 const disapproveBtn = document.getElementById('disapproveBtn');
 const disapproveWrap = document.getElementById('disapproveWrap');
-const updateA = document.getElementById('updateA');
-var docBlob = '';
-var docId = 0;
+const radioItem = document.getElementsByName('radioGroup');
+var docId = 1;
+let docBlob = '';
 var docName = '';
 var docType = '';
+let webViewer;
 
 approveBtn.disabled = true;
 disapproveBtn.disabled = true;
 
-fetch('/userDetails',  {method: 'POST'})
+fetch('/userDetails', { method: 'POST' })
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + ' ' + data.lastName;
 	});
 
-fetch('/forapproval', {method: 'POST'})
+fetch('/forapproval', { method: 'POST' })
 	.then(res => res.json())
 	.then(data => {
 		for (let i = 0; i < data.length; i++) {
 			const radioInput = document.createElement('input');
 			radioInput.setAttribute('type', 'radio');
-			radioInput.setAttribute('id', 'radioButton' + i);
+			radioInput.setAttribute('id', data[i].documentId);
 			radioInput.setAttribute('name', 'radioGroup');
+			radioInput.setAttribute('onCLick', 'getId(this)');
 
 			const labelElement = document.createElement('label');
-			labelElement.setAttribute('for', 'radioButton' + i);
-
+			labelElement.setAttribute('for', data[i].documentId);
+		
 			const labelText = document.createElement('div');
 			labelText.appendChild(document.createTextNode(data[i].fileName));
 			labelText.appendChild(document.createElement('br'));
 			labelText.appendChild(document.createTextNode(data[i].documentId));
-
+		
 			labelElement.appendChild(labelText);
-
+		
 			container.appendChild(radioInput);
 			container.appendChild(labelElement);
 		}
 	});
-	
+
 function checkRadio() {
 	container.addEventListener('change', function (event) {
 		const selectedRadioButton = event.target;
 		if (selectedRadioButton.type === 'radio' && selectedRadioButton.checked) {
 			const labelContent = document.querySelector(`label[for="${selectedRadioButton.id}"]`).innerText;
-			
+
 			const documentName = labelContent.split('\n')[0].trim();
 
 			let queryString = `${encodeURIComponent(documentName)}&`;
@@ -60,11 +63,6 @@ function checkRadio() {
 	});
 }
 
-//TODO
-container.addEventListener('click', () => {
-
-});
-
 approveBtn.addEventListener('click', () => {
 	approveWrap.classList.toggle('hidden');
 });
@@ -73,38 +71,45 @@ disapproveBtn.addEventListener('click', () => {
 	disapproveWrap.classList.toggle('hidden');
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-	updateA.action = window.location.href + '/approve'; 
+document.addEventListener('DOMContentLoaded', function () {
+	updateA.action = window.location.href + '/approve';
 });
 
 document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
 
-fetch(`/blobdoc/${docId}`, {method: 'POST'})
-	.then(res => res.blob())
-	.then(data => {
-		console.log(data)
-		docBlob = data;
-	})
+function getId(radio) {
+    const docId = radio.id;
+    let docBlob, docType;
+
+    const fetchDocBlob = fetch(`/blobdoc/${docId}`, { method: 'POST' })
+        .then(res => res.blob())
+        .then(data => {
+            docBlob = data;
+        });
+
+    const fetchDocType = fetch(`/typedoc/${docId}`, { method: 'POST' })
+        .then(res => res.text())
+        .then(data => {
+            docType = data;
+        });
+
+    Promise.all([fetchDocBlob, fetchDocType]).then(() => {
+        // Ensure both fetches have completed before loading the document
+        webViewer.loadDocument(docBlob, {
+            filename: docName, // Assuming docName is defined somewhere
+            extension: docType
+        });
+    });
+}
 
 WebViewer({
 	path: '../lib'
 }, viewer)
 	.then(instance => {
+		webViewer = instance;
 		var annotManager = instance.docViewer.getAnnotationManager();
-		// Load the document blob
-		if (docType == 'docx') {
-			instance.loadDocument(docBlob, {
-				filename: docName,
-				extension: 'docx'
-			});
-		} else if (docType == 'pdf') {
-			instance.loadDocument(docBlob, {
-				filename: docName,
-				extension: 'pdf'
-			});
-		}
 
 		// Add a save button on header
 		instance.setHeaderItems((header) => {
