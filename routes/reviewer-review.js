@@ -54,7 +54,7 @@ router.post('/approve/:docId', (req, res) => {
     global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail])
 })
 
-router.post('/disapprove/:docId', (req, res) => {
+router.post('/disapprove/:docId/:content', (req, res) => {
     const { docId } = req.params.docId;
     const userEmail = req.session.user.email;
     const content = req.params.content;

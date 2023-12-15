@@ -119,6 +119,10 @@ disapproveBtn.addEventListener('click', () => {
 	// disapproveWrap.classList.toggle('hidden');
 });
 
+disapproveBtn.addEventListener('click', () => {
+	fetch(`/disapprove/${docId}/${docBlob}`, {method: 'POST'})
+});
+
 document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
