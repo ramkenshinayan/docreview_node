@@ -111,12 +111,12 @@ approveBtn.addEventListener('click', () => {
 	setAnnot();
 });
 
-disapproveBtn.addEventListener('click', () => {
-	// disapproveWrap.classList.toggle('hidden');
+approveBtn.addEventListener('click', () => {
+	fetch(`/approve/${docId}`, {method: 'POST'})
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-	// updateA.action = window.location.href + '/approve';
+disapproveBtn.addEventListener('click', () => {
+	// disapproveWrap.classList.toggle('hidden');
 });
 
 document.addEventListener('DOMContentLoaded', function () {
