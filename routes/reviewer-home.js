@@ -49,20 +49,32 @@ router.get('/logout', (req, res) => {
 
 // GET count documents
 router.get('/total', (req, res) => {
-    global.conn.query(`SELECT DISTINCT documentId FROM document WHERE email = '${req.session.user.email}'`, (error, result) => {
-        res.send(String(result[0].documentId));
+    global.conn.query(`SELECT DISTINCT d.documentId AS total FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.email = '${req.session.user.email}'`, (error, result) => {
+        if(result && result.length > 0){
+            res.send(String(result[0].total));
+        } else {
+            res.send('0');
+        }
     });
 });
 
 router.get('/toreview', (req, res) => {
-    global.conn.query(`SELECT DISTINCT d.documentId FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.status = 'Pending' AND d.email = '${req.session.user.email}'`, (error, result) => {
-        res.send(String(result[0].documentId));
+    global.conn.query(`SELECT DISTINCT d.documentId AS total FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.status = 'Pending' AND rt.email = '${req.session.user.email}'`, (error, result) => {
+        if(result && result.length > 0){
+            res.send(String(result[0].total));
+        } else {
+            res.send('0');
+        }
     });
 });
 
 router.get('/overdue', (req, res) => {
-    global.conn.query(`SELECT DISTINCT documentId FROM document WHERE uploadDate < NOW() - INTERVAL 1 WEEK AND email = '${req.session.user.email}'`, (error, result) => {
-        res.send(String(result[0].total));
+    global.conn.query(`SELECT DISTINCT d.documentId AS total FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE uploadDate < NOW() - INTERVAL 1 WEEK AND rt.email = '${req.session.user.email}'`, (error, result) => {
+        if(result && result.length > 0){
+            res.send(String(result[0].total));
+        } else {
+            res.send('0');
+        }
     });
 });
 
