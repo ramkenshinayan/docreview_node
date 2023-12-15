@@ -49,19 +49,19 @@ router.get('/logout', (req, res) => {
 
 // GET count documents
 router.get('/total', (req, res) => {
-    global.conn.query(`SELECT COUNT(*) AS total FROM reviewtransaction rt JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE rs.email = '${req.session.user.email}'`, (error, result) => {
-        res.send(String(result[0].total));
+    global.conn.query(`SELECT DISTINCT documentId FROM document WHERE email = '${req.session.user.email}'`, (error, result) => {
+        res.send(String(result[0].documentId));
     });
 });
 
 router.get('/toreview', (req, res) => {
-    global.conn.query(`SELECT  COUNT(*) AS total FROM reviewtransaction rt JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE (rt.status = 'ongoing' OR rt.status = 'standby') AND rs.email = '${req.session.user.email}'`, (error, result) => {
-        res.send(String(result[0].total));
+    global.conn.query(`SELECT DISTINCT d.documentId FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.status = 'Pending' AND d.email = '${req.session.user.email}'`, (error, result) => {
+        res.send(String(result[0].documentId));
     });
 });
 
 router.get('/overdue', (req, res) => {
-    global.conn.query(`SELECT COUNT(*) AS total FROM document d JOIN reviewtransaction rt ON d.documentId = rt.documentId JOIN reviewsequence rs ON rt.reviewId = rs.reviewId WHERE d.uploadDate < NOW() - INTERVAL 1 WEEK AND rs.email = '${req.session.user.email}'`, (error, result) => {
+    global.conn.query(`SELECT DISTINCT documentId FROM document WHERE uploadDate < NOW() - INTERVAL 1 WEEK AND email = '${req.session.user.email}'`, (error, result) => {
         res.send(String(result[0].total));
     });
 });

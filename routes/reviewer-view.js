@@ -53,10 +53,9 @@ router.get('/history', (req, res) => {
                 res.status(500).json({ error: 'Internal Server Error' });
                 return;
             }
-            const query = `SELECT rt.*, d.fileName AS DocumentName, d.uploadDate AS UploadDate, rs.email AS email, rt.Status AS status
-            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID
-            LEFT JOIN reviewsequence AS rs ON rt.reviewId = rs.reviewId
-            WHERE rt.documentId = d.documentId AND rs.email =  '${req.session.email}'`;
+            const query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status 
+            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.documentId = d.documentId 
+            AND rt.email ='${req.session.email}'`;
             
             connection.query(query, (queryError, results) => {
                 connection.release();
@@ -79,10 +78,8 @@ router.get('/history', (req, res) => {
 router.get('/and', (req, res) => {
     try {
         pool.getConnection((err, connection) => {
-            let query = `SELECT rt.*, d.fileName AS DocumentName, d.uploadDate AS UploadDate, rs.email AS email, rt.Status AS status
-            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID
-            LEFT JOIN reviewsequence AS rs ON rt.reviewId = rs.reviewId
-            WHERE rt.documentId = d.documentId AND rs.email = '${req.session.user.email}' `;
+            let query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status 
+            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}' `;
 
             const conditions = [];
 
