@@ -3,12 +3,16 @@ const updateA = document.getElementById('updateA');
 const docList = document.getElementById('approvals');
 const container = document.getElementById('approvals');
 const approveBtn = document.getElementById('approveBtn');
-const approveWrap = document.getElementById('approveWrap');
 const disapproveBtn = document.getElementById('disapproveBtn');
 const disapproveWrap = document.getElementById('disapproveWrap');
+<<<<<<< HEAD
 const radioItem = document.getElementsByName('radioGroup');
 var docId = 1;
 let docBlob = '';
+=======
+var docBlob = '';
+var docId = 0;
+>>>>>>> c850320614624947742dddf165794d74662e86d8
 var docName = '';
 var docType = '';
 let webViewer;

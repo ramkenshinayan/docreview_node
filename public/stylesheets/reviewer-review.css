@@ -68,7 +68,6 @@ label {
 	height: 100%;
 	float: right;
 }
-#approveWrap,
 #disapproveWrap {
   margin-top: 0px;
   background: var(--primary-color-light);
@@ -97,17 +96,12 @@ label {
   background:  var(--box1-color);
 }
 
-#approveWrap.hidden,
-#disapproveWrap.hidden {
-    display: none;
+#approveBtn:disabled,
+#disapproveBtn:disabled {
+	opacity: 0.75; 
+	cursor: not-allowed;
 }
 
-.approve{
-	background: var(--primary-color);
-	border-radius: 20px;
-	color: var(--primary-color-light);
-	width: 20%;
-	height: 45px;
-	border: none;
-	float: right;
+#disapproveWrap.hidden {
+    display: none;
 }
