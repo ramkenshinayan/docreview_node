@@ -49,21 +49,14 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
-    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
-        console.log('app')
-        res.redirect('/reviewer-review');
-    });
+    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
 });
 
 router.post('/disapprove/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
-    const content = req.body.docBlob;
-    const annotations = req.body.xfdfString;
-    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId]);
+    // const content = req.body.anno;
     global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
-    console.log('dis1')
-    res.redirect('/reviewer-review');
 });
 
 // POST document blob

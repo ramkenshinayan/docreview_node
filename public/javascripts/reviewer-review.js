@@ -87,57 +87,36 @@ function selectDoc(radio) {
 			extension: docType
 		});
 	});
+	// selectAnnot();
 }
 
 approveBtn.addEventListener('click', () => {
 	fetch(`/approve/${docId}`, {
 		method: 'POST',
-	})
-		.then(response => {
-			console.log('Document approved successfully:', response);
-			window.location.href = response.url;
-		})
-		.catch(error => {
-			console.error('Error sending approval:', error);
-		});
-});
-
-disapproveBtn.addEventListener('click', () => {
-	const doc = webViewer.docViewer.getDocument();
-	const xfdfString = webViewer.annotManager.exportAnnotations();
-	const docBlob = new Blob([doc.getFileData()], { type: 'application/pdf' })
-	fetch(`/disapprove/${docId}`, {
-		method: 'POST',
+		body: documentBlob,
 		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ docBlob, xfdfString }),
+			'Content-Type': 'application/pdf'
+		}
 	})
 		.then(response => {
 			console.log('Document sent successfully:', response);
-			window.location.href = response.url;
 		})
 		.catch(error => {
 			console.error('Error sending document:', error);
 		});
-	// webViewer.Core.document.getFileData({})
-	// 	.then(function (data) {
-	// 		var documentBlob = new Blob([data], { type: 'application/pdf' });
-	// 		fetch(`/disapprove/${docId}`, {
-	// 			method: 'POST',
-	// 			body: documentBlob,
-	// 			headers: {
-	// 				'Content-Type': 'application/pdf'
-	// 			}
-	// 		})
-	// 			.then(response => {
-	// 				console.log('Document sent successfully:', response);
-	// 				window.location.href = response.url;
-	// 			})
-	// 			.catch(error => {
-	// 				console.error('Error sending document:', error);
-	// 			});
-	// 	});
+});
+
+disapproveBtn.addEventListener('click', () => {
+	// var annoBlob = new Blob([docViewer.getAnnotationManager().exportAnnotations()]);
+	console.log(annoBlob)
+	fetch(`/disapprove/${docId}`, { method: 'POST' })
+		.then(response => {
+			// console.log('Annotations sent successfully:', response);
+			console.log('Denial sent successfully:', response);
+		})
+		.catch(error => {
+			console.error('Error sending document:', error);
+		});
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -149,4 +128,5 @@ WebViewer({
 }, viewer)
 	.then(instance => {
 		webViewer = instance;
+		docViewer = instance.docViewer;
 	});
