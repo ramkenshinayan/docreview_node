@@ -38,10 +38,10 @@ router.post('/forapproval', (req, res) => {
     const { reviewer } = req.params;
     global.conn.query(`SELECT d.fileName, d.documentId, rt.email FROM document AS d
     JOIN reviewtransaction AS rt ON d.documentId = rt.documentId
-    WHERE rt.email = '${req.session.user.email}' AND rt.sequenceOrder = 1 AND rt.status = 'Ongoing'
+    WHERE rt.email = '${req.session.user.email}' AND rt.sequenceOrder = 1 AND rt.status = 'Pending'
     UNION SELECT d.fileName, d.documentId, rt.email FROM document AS d
     JOIN reviewtransaction AS rt ON d.documentId = rt.documentId JOIN reviewtransaction AS rt_prev ON rt.documentId = rt_prev.documentId 
-    AND rt.sequenceOrder = rt_prev.sequenceOrder + 1 WHERE rt.email = '${req.session.user.email}' AND rt_prev.status != 'Ongoing' AND rt.status = 'Ongoing';`, (err, result) => {
+    AND rt.sequenceOrder = rt_prev.sequenceOrder + 1 WHERE rt.email = '${req.session.user.email}' AND rt_prev.status != 'Pending' AND rt.status = 'Pending';`, (err, result) => {
         res.json(result);
     });
 });
@@ -51,8 +51,7 @@ router.post('/approve/:docId', (req, res) => {
     const userEmail = req.session.user.email;
     global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
         global.conn.query(`UPDATE reviewtransaction AS rt_current JOIN reviewtransaction AS rt_next ON rt_current.documentId = rt_next.documentId
-            AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Ongoing' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail])
-        console.log('app')
+            AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Pending' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail])
         res.redirect('/reviewer-review');
     });
 });
