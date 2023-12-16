@@ -33,9 +33,7 @@ router.post('/userDetails', (req, res) => {
     res.send(req.session.user);
 });
 
-// TODO make it so that the documents are only for the current reviewer
 // POST documents
-// TODO query, should be the specified reviewer
 router.post('/forapproval', (req, res) => {
     const { reviewer } = req.params;
     global.conn.query(`SELECT d.fileName, d.documentId, rt.email
@@ -51,15 +49,20 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
+    const content = res.body;
     global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail])
+    // TODO INSERT document with comments to table
+    // res.redirect siguro to reload the page?
 })
 
-router.post('/disapprove/:docId/:content', (req, res) => {
+router.post('/disapprove/:docId', (req, res) => {
     const { docId } = req.params.docId;
     const userEmail = req.session.user.email;
-    const content = req.params.content;
+    const content = res.body;
     global.conn.query('UPDATE comments SET content = ? WHERE documentId = ? AND email = ?', [content, docId, userEmail])
     global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail])
+    // TODO INSERT document with comments to table
+    // res.redirect siguro to reload the page?
 })
 
 // POST document blob
@@ -84,20 +87,6 @@ router.post('/typedoc/:docId', (req, res) => {
         const docType = result[0].fileType;
         res.send(docType);
     });
-});
-
-router.post('/setAnnot', (req, res) => {
-    // TODO query to save xfdf(blob) to comments table
-    console.log(req.body.xfdfData);
-    console.log(req.body.docId);
-    res.send(req.body.xfdfData);
-});
-
-router.post('/getAnnot', (req, res) => {
-    // TODO query to obtain xfdf(blob) from comments table
-    console.log(req.body.xfdfData);
-    console.log(req.body.docId);
-    res.send(req.body.xfdfData);
 });
 
 // GET logout

@@ -10,6 +10,7 @@ var docId = 1;
 var docBlob = '';
 var docName = '';
 var docType = '';
+var reviewerName = '';
 let webViewer;
 
 approveBtn.disabled = true;
@@ -19,6 +20,7 @@ fetch('/userDetails', { method: 'POST' })
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + ' ' + data.lastName;
+		reviewerName = data.firstName + ' ' + data.lastName;
 	});
 
 fetch('/forapproval', { method: 'POST' })
@@ -29,7 +31,7 @@ fetch('/forapproval', { method: 'POST' })
 			radioInput.setAttribute('type', 'radio');
 			radioInput.setAttribute('id', data[i].documentId);
 			radioInput.setAttribute('name', 'radioGroup');
-			radioInput.setAttribute('onCLick', 'getId(this)');
+			radioInput.setAttribute('onCLick', 'selectDoc(this)');
 
 			const labelElement = document.createElement('label');
 			labelElement.setAttribute('for', data[i].documentId);
@@ -62,7 +64,7 @@ function checkRadio() {
 	});
 }
 
-function getId(radio) {
+function selectDoc(radio) {
 	docId = radio.id;
 	let docBlob, docType;
 
@@ -79,48 +81,51 @@ function getId(radio) {
 		});
 
 	Promise.all([fetchDocBlob, fetchDocType]).then(() => {
+		webViewer.setAnnotationUser(reviewerName);
 		webViewer.loadDocument(docBlob, {
 			filename: docName,
 			extension: docType
 		});
 	});
+	selectAnnot();
 }
 
-function setAnnot() {
-	const { annotManager } = webViewer;
-	const xfdfData = annotManager.exportAnnotations({ links: false, widgets: false });
-	console.log('XFDF data:', JSON.parse(xfdfData));
-	fetch('/setAnnot', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({ xfdfData, docId }),
-	})
-		.then(response => {
-			if (response.ok) {
-				console.log('XFDF data sent successfully');
-			} else {
-				console.error('Failed to send XFDF data');
+approveBtn.addEventListener('click', () => {
+	webViewer.Core.document.getFileData({}).then(function (data) {
+		var documentBlob = new Blob([data], { type: 'application/pdf' });
+		fetch(`/approve/${docId}`, {
+			method: 'POST',
+			body: documentBlob,
+			headers: {
+				'Content-Type': 'application/pdf'
 			}
 		})
-}
-
-approveBtn.addEventListener('click', () => {
-	// approveWrap.classList.toggle('hidden');
-	setAnnot();
-});
-
-approveBtn.addEventListener('click', () => {
-	fetch(`/approve/${docId}`, {method: 'POST'})
-});
-
-disapproveBtn.addEventListener('click', () => {
-	// disapproveWrap.classList.toggle('hidden');
+			.then(response => {
+				console.log('Document sent successfully:', response);
+			})
+			.catch(error => {
+				console.error('Error sending document:', error);
+			});
+	});
 });
 
 disapproveBtn.addEventListener('click', () => {
-	fetch(`/disapprove/${docId}/${docBlob}`, {method: 'POST'})
+	webViewer.Core.document.getFileData({}).then(function (data) {
+		var documentBlob = new Blob([data], { type: 'application/pdf' });
+		fetch(`/disapprove/${docId}`, {
+			method: 'POST',
+			body: documentBlob,
+			headers: {
+				'Content-Type': 'application/pdf'
+			}
+		})
+			.then(response => {
+				console.log('Document sent successfully:', response);
+			})
+			.catch(error => {
+				console.error('Error sending document:', error);
+			});
+	});
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -132,21 +137,4 @@ WebViewer({
 }, viewer)
 	.then(instance => {
 		webViewer = instance;
-		const { annotManager } = instance;
-
-		fetch('/getAnnot')
-			.then(response => response.json())
-			.then(data => {
-				const xfdfData = data.xfdf;
-				annotManager.importAnnotations(xfdfData)
-					.then(() => {
-						console.log('XFDF data loaded successfully');
-					})
-					.catch(error => {
-						console.error('Error loading XFDF data:', error);
-					});
-			})
-			.catch(error => {
-				console.error('Error fetching XFDF data:', error);
-			});
 	});
