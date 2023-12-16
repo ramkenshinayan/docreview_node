@@ -87,45 +87,57 @@ function selectDoc(radio) {
 			extension: docType
 		});
 	});
-	selectAnnot();
 }
 
 approveBtn.addEventListener('click', () => {
-	webViewer.Core.document.getFileData({}).then(function (data) {
-		var documentBlob = new Blob([data], { type: 'application/pdf' });
-		fetch(`/approve/${docId}`, {
-			method: 'POST',
-			body: documentBlob,
-			headers: {
-				'Content-Type': 'application/pdf'
-			}
+	fetch(`/approve/${docId}`, {
+		method: 'POST',
+	})
+		.then(response => {
+			console.log('Document approved successfully:', response);
+			window.location.href = response.url;
 		})
-			.then(response => {
-				console.log('Document sent successfully:', response);
-			})
-			.catch(error => {
-				console.error('Error sending document:', error);
-			});
-	});
+		.catch(error => {
+			console.error('Error sending approval:', error);
+		});
 });
 
 disapproveBtn.addEventListener('click', () => {
-	webViewer.Core.document.getFileData({}).then(function (data) {
-		var documentBlob = new Blob([data], { type: 'application/pdf' });
-		fetch(`/disapprove/${docId}`, {
-			method: 'POST',
-			body: documentBlob,
-			headers: {
-				'Content-Type': 'application/pdf'
-			}
+	const doc = webViewer.docViewer.getDocument();
+	const xfdfString = webViewer.annotManager.exportAnnotations();
+	const docBlob = new Blob([doc.getFileData()], { type: 'application/pdf' })
+	fetch(`/disapprove/${docId}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ docBlob, xfdfString }),
+	})
+		.then(response => {
+			console.log('Document sent successfully:', response);
+			window.location.href = response.url;
 		})
-			.then(response => {
-				console.log('Document sent successfully:', response);
-			})
-			.catch(error => {
-				console.error('Error sending document:', error);
-			});
-	});
+		.catch(error => {
+			console.error('Error sending document:', error);
+		});
+	// webViewer.Core.document.getFileData({})
+	// 	.then(function (data) {
+	// 		var documentBlob = new Blob([data], { type: 'application/pdf' });
+	// 		fetch(`/disapprove/${docId}`, {
+	// 			method: 'POST',
+	// 			body: documentBlob,
+	// 			headers: {
+	// 				'Content-Type': 'application/pdf'
+	// 			}
+	// 		})
+	// 			.then(response => {
+	// 				console.log('Document sent successfully:', response);
+	// 				window.location.href = response.url;
+	// 			})
+	// 			.catch(error => {
+	// 				console.error('Error sending document:', error);
+	// 			});
+	// 	});
 });
 
 document.addEventListener('DOMContentLoaded', function () {

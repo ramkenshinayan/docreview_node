@@ -49,21 +49,22 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
-    const content = res.body;
-    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail])
-    // TODO INSERT document with comments to table
-    // res.redirect siguro to reload the page?
-})
+    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
+        console.log('app')
+        res.redirect('/reviewer-review');
+    });
+});
 
 router.post('/disapprove/:docId', (req, res) => {
-    const { docId } = req.params.docId;
+    const { docId } = req.params;
     const userEmail = req.session.user.email;
-    const content = res.body;
-    global.conn.query('UPDATE comments SET content = ? WHERE documentId = ? AND email = ?', [content, docId, userEmail])
-    global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail])
-    // TODO INSERT document with comments to table
-    // res.redirect siguro to reload the page?
-})
+    const content = req.body.docBlob;
+    const annotations = req.body.xfdfString;
+    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId]);
+    global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
+    console.log('dis1')
+    res.redirect('/reviewer-review');
+});
 
 // POST document blob
 router.post('/blobdoc/:docId', (req, res) => {
