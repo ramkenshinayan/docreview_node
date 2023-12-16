@@ -36,12 +36,12 @@ router.post('/userDetails', (req, res) => {
 // POST documents
 router.post('/forapproval', (req, res) => {
     const { reviewer } = req.params;
-    global.conn.query(`SELECT d.fileName, d.documentId, rt.email
-    FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId
-    WHERE rt.email = '${req.session.user.email}' AND rt.sequenceOrder = 1 
-    UNION SELECT d.fileName, d.documentId, rt.email FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId
-    JOIN reviewtransaction AS rt_prev ON rt.documentId = rt_prev.documentId AND rt.sequenceOrder = rt_prev.sequenceOrder + 1
-    WHERE rt.email = '${req.session.user.email}' AND rt_prev.status != 'Pending'; `, (err, result) => {
+    global.conn.query(`SELECT d.fileName, d.documentId, rt.email FROM document AS d
+    JOIN reviewtransaction AS rt ON d.documentId = rt.documentId
+    WHERE rt.email = '${req.session.user.email}' AND rt.sequenceOrder = 1 AND rt.status = 'Ongoing'
+    UNION SELECT d.fileName, d.documentId, rt.email FROM document AS d
+    JOIN reviewtransaction AS rt ON d.documentId = rt.documentId JOIN reviewtransaction AS rt_prev ON rt.documentId = rt_prev.documentId 
+    AND rt.sequenceOrder = rt_prev.sequenceOrder + 1 WHERE rt.email = '${req.session.user.email}' AND rt_prev.status != 'Ongoing' AND rt.status = 'Ongoing';`, (err, result) => {
         res.json(result);
     });
 });
