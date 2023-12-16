@@ -49,7 +49,12 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
-    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
+    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
+        global.conn.query(`UPDATE reviewtransaction AS rt_current JOIN reviewtransaction AS rt_next ON rt_current.documentId = rt_next.documentId
+            AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Ongoing' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail])
+        console.log('app')
+        res.redirect('/reviewer-review');
+    });
 });
 
 router.post('/disapprove/:docId', (req, res) => {
