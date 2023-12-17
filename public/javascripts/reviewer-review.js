@@ -11,7 +11,6 @@ var docBlob = '';
 var docName = '';
 var docType = '';
 var reviewerName = '';
-let webViewer;
 
 approveBtn.disabled = true;
 disapproveBtn.disabled = true;
@@ -106,19 +105,6 @@ approveBtn.addEventListener('click', () => {
 		});
 });
 
-disapproveBtn.addEventListener('click', () => {
-	// var annoBlob = new Blob([docViewer.getAnnotationManager().exportAnnotations()]);
-	console.log(annoBlob)
-	fetch(`/disapprove/${docId}`, { method: 'POST' })
-		.then(response => {
-			// console.log('Annotations sent successfully:', response);
-			console.log('Denial sent successfully:', response);
-		})
-		.catch(error => {
-			console.error('Error sending document:', error);
-		});
-});
-
 document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
@@ -128,5 +114,33 @@ WebViewer({
 }, viewer)
 	.then(instance => {
 		webViewer = instance;
-		docViewer = instance.docViewer;
+
+		const { docViewer, annotManager } = instance;
+
+		disapproveBtn.addEventListener('click', async () => {
+			const doc = docViewer.getDocument();
+			const xfdfString = await annotManager.exportAnnotations();
+			const data = await doc.getFileData({ xfdfString});
+			const arr = new Uint8Array(data);
+			const newDocBlob = new Blob([arr], { type: 'application/pdf' });
+			console.log("Xfdf String:", xfdfString);
+			console.log("Data:", data);
+			console.log("Uint8Array:", arr);
+			console.log("Blob:", newDocBlob);
+
+			fetch(`/disapprove/${docId}`, {
+				method: 'POST',
+				body: newDocBlob,
+				headers: {
+					'Content-Type': 'application/pdf',
+				},
+			})
+				.then(response => {
+					// console.log('Annotations sent successfully:', response);
+					console.log('Status:', response);
+				})
+				.catch(error => {
+					console.error('Error sending document:', error);
+				});
+		});
 	});

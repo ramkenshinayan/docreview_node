@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+router.use(express.raw({ type: 'application/pdf', limit: '20mb' })); 
+
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
     if (req.session.user) {
@@ -58,9 +60,12 @@ router.post('/approve/:docId', (req, res) => {
 
 router.post('/disapprove/:docId', (req, res) => {
     const { docId } = req.params;
-    const userEmail = req.session.user.email;
-    // const content = req.body.anno;
-    global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
+    const content = req.body;
+    console.log(content);
+    // global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
+    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId], (err, result)=> {
+        res.render('reviewer-review');
+    });
 });
 
 // POST document blob
