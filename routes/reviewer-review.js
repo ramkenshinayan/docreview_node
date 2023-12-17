@@ -35,17 +35,14 @@ router.post('/userDetails', (req, res) => {
     res.send(req.session.user);
 });
 
-// POST documents
 router.post('/forapproval', (req, res) => {
-    const { reviewer } = req.params;
-    global.conn.query(`SELECT d.fileName, d.documentId, rt.email FROM document AS d
-    JOIN reviewtransaction AS rt ON d.documentId = rt.documentId
-    WHERE rt.email = '${req.session.user.email}' AND rt.sequenceOrder = 1 AND rt.status = 'Pending'
-    UNION SELECT d.fileName, d.documentId, rt.email FROM document AS d
-    JOIN reviewtransaction AS rt ON d.documentId = rt.documentId JOIN reviewtransaction AS rt_prev ON rt.documentId = rt_prev.documentId 
-    AND rt.sequenceOrder = rt_prev.sequenceOrder + 1 WHERE rt.email = '${req.session.user.email}' AND rt_prev.status != 'Pending' AND rt.status = 'Pending';`, (err, result) => {
-        res.json(result);
-    });
+    // const { reviewer } = req.params;
+    var query = `SELECT d.fileName, d.documentId
+    FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.status = 'Ongoing' AND rt.email = '${req.session.user.email}'`;
+    global.conn.query(query, (err, result) => {
+            res.json(result);
+            console.log(query);
+        });
 });
 
 router.post('/approve/:docId', (req, res) => {
@@ -53,7 +50,8 @@ router.post('/approve/:docId', (req, res) => {
     const userEmail = req.session.user.email;
     global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
         global.conn.query(`UPDATE reviewtransaction AS rt_current JOIN reviewtransaction AS rt_next ON rt_current.documentId = rt_next.documentId
-            AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Pending' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail])
+            AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Ongoing' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail])
+        res.sendStatus;
         res.redirect('/reviewer-review');
     });
 });
@@ -62,7 +60,7 @@ router.post('/disapprove/:docId', (req, res) => {
     const { docId } = req.params;
     const content = req.body;
     console.log(content);
-    // global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
+     global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
     global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId], (err, result)=> {
         res.render('reviewer-review');
     });

@@ -53,9 +53,9 @@ router.get('/history', (req, res) => {
                 res.status(500).json({ error: 'Internal Server Error' });
                 return;
             }
-            const query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status 
-            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.documentId = d.documentId 
-            AND rt.email ='${req.session.user.email}'`;
+            const query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status
+        FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}'
+        GROUP BY d.documentId`;
             
             connection.query(query, (queryError, results) => {
                 connection.release();
@@ -80,8 +80,9 @@ router.get('/history', (req, res) => {
 router.get('/and', (req, res) => {
     try {
         pool.getConnection((err, connection) => {
-            let query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status 
-            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}' `;
+            let query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status
+            FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}'
+            GROUP BY d.documentId`;
 
             const conditions = [];
 
@@ -113,6 +114,12 @@ router.get('/and', (req, res) => {
                         query += " ORDER BY d.UploadDate DESC";
                         break;
                 }
+            }
+
+            //search
+            const searchTerm = req.query.search;
+            if (searchTerm) {
+                conditions.push(`d.fileName LIKE '%${searchTerm}%'`);
             }
 
             connection.query(query, (queryError, results) => {

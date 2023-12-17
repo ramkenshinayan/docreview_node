@@ -196,7 +196,7 @@ function updateReviews(reviews) {
 
 			const statusHeader = document.createElement('h3');
 			statusHeader.classList.add('status');
-			statusHeader.textContent = review.ApprovalStatus;
+			statusHeader.textContent = review.status;
 
 			reviewBox.appendChild(content);
 			reviewBox.appendChild(statusHeader);

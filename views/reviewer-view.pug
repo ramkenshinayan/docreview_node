@@ -60,7 +60,7 @@ html
       .top
         .search-box
           ion-icon.search-icon(name='search-outline')
-          input(type='search' placeholder='Search...')
+          input(type="search", id="searchInput", placeholder="Search...", onkeydown="handleSearch(event)")
         .profile-details
           img(src='/images/school.png' alt='')
           span.user_name
@@ -70,7 +70,7 @@ html
         .overview
           .title
             ion-icon.content-icon(name='bar-chart-outline')
-            span.text Request History
+            span.text Review History
             // filter
             .filter-box
               .filter-btn
