@@ -30,7 +30,7 @@
 	font-size: 12px;
 	left: -1px;
 	padding: 10px 0 7px 5px;
-	height:720px;
+	height:1120px;
 	overflow-y: auto;
 	width: 27%;
 	float: left;
@@ -87,6 +87,8 @@ label {
   text-align: center;
   color: white;
   text-decoration: none;
+  margin-top: -20px;
+  margin-bottom: 20px;
 }
 
 #approveBtn:hover,
