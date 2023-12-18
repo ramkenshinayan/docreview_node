@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-router.use(express.raw({ type: 'application/pdf', limit: '20mb' })); 
+router.use(express.raw({ type: 'application/pdf', limit: '20mb' }));
 
 // GET reviewer-home page
 router.get('/reviewer-home', (req, res, next) => {
@@ -35,16 +35,16 @@ router.post('/userDetails', (req, res) => {
     res.send(req.session.user);
 });
 
+// POST ongoing review documents
 router.post('/forapproval', (req, res) => {
-    // const { reviewer } = req.params;
     var query = `SELECT d.fileName, d.documentId
     FROM document AS d JOIN reviewtransaction AS rt ON d.documentId = rt.documentId WHERE rt.status = 'Ongoing' AND rt.email = '${req.session.user.email}'`;
     global.conn.query(query, (err, result) => {
-            res.json(result);
-            console.log(query);
-        });
+        res.json(result);
+    });
 });
 
+// POST approve document
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
@@ -56,13 +56,14 @@ router.post('/approve/:docId', (req, res) => {
     });
 });
 
+// POST disapprove document
 router.post('/disapprove/:docId', (req, res) => {
     const { docId } = req.params;
+    const userEmail = req.session.user.email;
     const content = req.body;
-    console.log(content);
-     global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail]);
-    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId], (err, result)=> {
-        res.render('reviewer-review');
+    global.conn.query('UPDATE reviewtransaction SET status = "Disapproved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => { });
+    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId], (err, result) => {
+        res.sendStatus;
     });
 });
 

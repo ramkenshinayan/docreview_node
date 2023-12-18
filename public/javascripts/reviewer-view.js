@@ -16,6 +16,7 @@ fetch('/userDetails')
 	.then(res => res.json())
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + " " + data.lastName;
+		console.log('Fetched user details...');
 	});
 
 fetch('/history')
@@ -33,6 +34,7 @@ fetch('/history')
 	})
 	.then(data => {
 		updateReviews(data);
+		console.log('Fetched history...');
 	})
 	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
