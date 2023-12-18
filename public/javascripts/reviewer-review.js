@@ -20,6 +20,7 @@ fetch('/userDetails', { method: 'POST' })
 	.then(data => {
 		document.getElementById('username').innerHTML = data.firstName + ' ' + data.lastName;
 		reviewerName = data.firstName + ' ' + data.lastName;
+		console.log('Fetched user details...');
 	});
 
 fetch('/forapproval', { method: 'POST' })
@@ -45,6 +46,7 @@ fetch('/forapproval', { method: 'POST' })
 			container.appendChild(radioInput);
 			container.appendChild(labelElement);
 		}
+		console.log('Fetched documents for approval...');
 	});
 
 function checkRadio() {
@@ -86,7 +88,7 @@ function selectDoc(radio) {
 			extension: docType
 		});
 	});
-	// selectAnnot();
+	console.log('Fetched document id: ' + docId + '...')
 }
 
 approveBtn.addEventListener('click', () => {
@@ -94,13 +96,12 @@ approveBtn.addEventListener('click', () => {
 		method: 'POST'
 	})
 		.then(response => {
-			alert('Document sent successfully:', response);
-			location.reload();
+			alert('Approval sent successfully');
 		})
 		.catch(error => {
-			alert('Error sending document:', error);
-			location.reload();
+			alert('Error sending approval');
 		});
+		location.reload();
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -118,7 +119,7 @@ WebViewer({
 		disapproveBtn.addEventListener('click', async () => {
 			const doc = docViewer.getDocument();
 			const xfdfString = await annotManager.exportAnnotations();
-			const data = await doc.getFileData({ xfdfString});
+			const data = await doc.getFileData({ xfdfString });
 			const arr = new Uint8Array(data);
 			const newDocBlob = new Blob([arr], { type: 'application/pdf' });
 			console.log("Xfdf String:", xfdfString);
@@ -134,11 +135,12 @@ WebViewer({
 				},
 			})
 				.then(response => {
-					// console.log('Annotations sent successfully:', response);
+					alert('Disapproval sent successfully');
 					console.log('Status:', response);
 				})
 				.catch(error => {
-					console.error('Error sending document:', error);
+					console.error('Error sending disapproval');
 				});
+			location.reload();
 		});
 	});
