@@ -7,11 +7,8 @@ var loginResult;
 // Start session
 router.use(session({
   secret: 'somesecretkey',
-  resave: true,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24,
-  },
+  resave: false,
+  saveUninitialized: false
 }));
 
 // Connect database
@@ -30,8 +27,7 @@ connection.connect((err) => {
 global.conn = connection;
 
 // GET homepage
-router.get('/', (req, res, next) => {
-  // Check session
+router.get('/', (req, res) => {
   if (req.session.user) {
     res.render('reviewer-home');
   } else {
@@ -39,12 +35,20 @@ router.get('/', (req, res, next) => {
   }
 });
 
-// GET reviewer-home page
-router.get('/reviewer-home', (req, res, next) => {
-  if (req.session.user) {
-    res.render('reviewer-home');
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.user) {
+    return next();
   } else {
-    res.render('index');
+    res.redirect('/');
+  }
+};
+
+// GET reviewer-home page
+router.get('/reviewer-view', isAuthenticated, (req, res) => {
+  if (req.session.user) {
+    res.render('reviewer-view');
+  } else {
+    res.redirect(302, '/');
   }
 });
 

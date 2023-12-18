@@ -1,32 +1,39 @@
 var express = require('express');
 var router = express.Router();
 
+router.use((req, res, next) => {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    next();
+});
+
 router.use(express.raw({ type: 'application/pdf', limit: '20mb' }));
 
 // GET reviewer-home page
-router.get('/reviewer-home', (req, res, next) => {
+router.get('/reviewer-home', (req, res,) => {
     if (req.session.user) {
         res.render('reviewer-home');
     } else {
-        res.render('index');
+        res.redirect(302, '/');
     }
 });
 
 // GET reviewer-view page
-router.get('/reviewer-view', (req, res, next) => {
+router.get('/reviewer-view', (req, res) => {
     if (req.session.user) {
         res.render('reviewer-view');
     } else {
-        res.render('index');
+        res.redirect(302, '/');
     }
 });
 
-// GET reviewer-add page
-router.get('/reviewer-review', (req, res, next) => {
+// GET reviewer-review page
+router.get('/reviewer-review', (req, res) => {
     if (req.session.user) {
         res.render('reviewer-review');
     } else {
-        res.render('index');
+        res.redirect(302, '/');
     }
 });
 
@@ -48,9 +55,17 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
-    const today = new Date();
-    const formattedDate = today.toISOString().split('T')[0];
-    global.conn.query('UPDATE reviewtransaction SET status = "Approved" approvedDate = ? WHERE documentId = ? AND email = ?', [formattedDate, docId, userEmail], (err, result) => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
+        if (err) {
+            res.status(404);
+        }
+    });
+    global.conn.query('UPDATE reviewtransaction SET approvedDate = ? WHERE documentId = ? AND email = ?', [formattedDate, docId, userEmail], (err, result) => {
         if (err) {
             res.status(404);
         }

@@ -2,7 +2,41 @@ var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 
+router.use((req, res, next) => {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    next();
+});
+
 router.use(express.urlencoded({ extended: true }));
+
+// GET reviewer-home page
+router.get('/reviewer-home', (req, res,) => {
+    if (req.session.user) {
+        res.render('reviewer-home');
+    } else {
+        res.redirect(302, '/');
+    }
+});
+
+// GET reviewer-view page
+router.get('/reviewer-view', (req, res) => {
+    if (req.session.user) {
+        res.render('reviewer-view');
+    } else {
+        res.redirect(302, '/');
+    }
+});
+
+// GET reviewer-review page
+router.get('/reviewer-review', (req, res) => {
+    if (req.session.user) {
+        res.render('reviewer-review');
+    } else {
+        res.redirect(302, '/');
+    }
+});
 
 // Database
 const pool = mysql.createPool({
