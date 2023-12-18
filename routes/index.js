@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var session = require('express-session');
 var mysql = require('mysql');
+var loginResult;
 
 // Start session
 router.use(session({
@@ -78,16 +79,23 @@ router.post('/login', (req, res) => {
           }
         });
         console.log('Log in successful.');
-        res.redirect('reviewer-home');
+        loginResult = 'success';
+        res.status(202).redirect('reviewer-home');
       } else {
         console.log('User is already logged in.');
-        res.redirect('/');
+        loginResult = 'logged';
+        res.status(404).redirect('/');
       }
     } else {
       console.log('Invalid email or password.');
-      res.redirect('/');
+      loginResult = 'invalid';
+      res.status(404).redirect('/');
     }
   });
+});
+
+router.get('/loginresult', (req, res) => {
+  res.send(loginResult);
 });
 
 module.exports = router;

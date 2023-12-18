@@ -56,18 +56,18 @@ router.get('/history', (req, res) => {
             const query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status
         FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}'
         GROUP BY d.documentId`;
-            
+
             connection.query(query, (queryError, results) => {
                 connection.release();
 
-            if (queryError) {
-                console.error('Error in query:', queryError);
-                res.status(500).json({ error: 'Internal Server Error' });
-            } else {
-                console.log(query);
-                console.log(results);
-                res.json(results);
-            }
+                if (queryError) {
+                    console.error('Error in query:', queryError);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    console.log(query);
+                    console.log(results);
+                    res.json(results);
+                }
             });
         });
     } catch (error) {
