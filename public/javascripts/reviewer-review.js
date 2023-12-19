@@ -6,7 +6,7 @@ const approveBtn = document.getElementById('approveBtn');
 const disapproveBtn = document.getElementById('disapproveBtn');
 const disapproveWrap = document.getElementById('disapproveWrap');
 const radioItem = document.getElementsByName('radioGroup');
-var docId = 0;
+var docId = 1;
 var docBlob = '';
 var docName = '';
 var docType = '';
@@ -39,7 +39,7 @@ fetch('/forapproval', { method: 'POST' })
 			const labelText = document.createElement('div');
 			labelText.appendChild(document.createTextNode(data[i].fileName));
 			labelText.appendChild(document.createElement('br'));
-			labelText.appendChild(document.createTextNode(data[i].documentId));
+			labelText.appendChild(document.createTextNode('Document ID: ' + data[i].documentId));
 
 			labelElement.appendChild(labelText);
 
@@ -91,19 +91,6 @@ function selectDoc(radio) {
 	console.log('Fetched document id: ' + docId + '...')
 }
 
-approveBtn.addEventListener('click', () => {
-	fetch(`/approve/${docId}`, {
-		method: 'POST'
-	})
-		.then(response => {
-			alert('Approval sent successfully');
-		})
-		.catch(error => {
-			alert('Error sending approval');
-		});
-		location.reload();
-});
-
 document.addEventListener('DOMContentLoaded', function () {
 	checkRadio();
 });
@@ -116,16 +103,35 @@ WebViewer({
 
 		const { docViewer, annotManager } = instance;
 
+		approveBtn.addEventListener('click', async () => {
+			const doc = docViewer.getDocument();
+			const xfdfString = await annotManager.exportAnnotations();
+			const data = await doc.getFileData({ xfdfString });
+			const arr = new Uint8Array(data);
+			const newDocBlob = new Blob([arr], { type: 'application/pdf' });
+
+			fetch(`/approve/${docId}`, { 
+				method: 'POST',
+				body: newDocBlob,
+				headers: {
+					'Content-Type': 'application/pdf',
+				}, 
+			})
+				.then(response => {
+					alert('Approval sent successfully');
+				})
+				.catch(error => {
+					console.error('Error sending approval');
+				});
+			location.reload();
+		});
+
 		disapproveBtn.addEventListener('click', async () => {
 			const doc = docViewer.getDocument();
 			const xfdfString = await annotManager.exportAnnotations();
 			const data = await doc.getFileData({ xfdfString });
 			const arr = new Uint8Array(data);
 			const newDocBlob = new Blob([arr], { type: 'application/pdf' });
-			console.log("Xfdf String:", xfdfString);
-			console.log("Data:", data);
-			console.log("Uint8Array:", arr);
-			console.log("Blob:", newDocBlob);
 
 			fetch(`/disapprove/${docId}`, {
 				method: 'POST',
@@ -136,7 +142,6 @@ WebViewer({
 			})
 				.then(response => {
 					alert('Disapproval sent successfully');
-					console.log('Status:', response);
 				})
 				.catch(error => {
 					console.error('Error sending disapproval');

@@ -1,17 +1,16 @@
-const sort = document.querySelector(".sort-box"),
-	sortBtn = sort.querySelector(".sort-btn"),
-	sortAll = sort.querySelectorAll(".sort"),
-	sortCol = document.getElementsByClassName("sort-btn"),
+const sort = document.querySelector(".sort-box");
+const sortBtn = sort.querySelector(".sort-btn");
+const sortAll = sort.querySelectorAll(".sort");
+const sortCol = document.getElementsByClassName("sort-btn");
+const filter = document.querySelector(".filter-box");
+const filterBtn = filter.querySelector(".filter-btn");
+const filterAll = filter.querySelectorAll(".filter");
+const filterCol = document.getElementsByClassName("filter-btn");
+const sortItems = document.querySelectorAll(".sort-items");
+const filterItems = document.querySelectorAll(".filter-items");
+const documentName = document.querySelector(".name");
+const statusLabel = document.querySelectorAll("status");
 
-	filter = document.querySelector(".filter-box"),
-	filterBtn = filter.querySelector(".filter-btn"),
-	filterAll = filter.querySelectorAll(".filter"),
-	filterCol = document.getElementsByClassName("filter-btn"),
-	sortItems = document.querySelectorAll(".sort-items"),
-	filterItems = document.querySelectorAll(".filter-items"),
-
-	documentName = document.querySelector(".name");
-	
 fetch('/userDetails')
 	.then(res => res.json())
 	.then(data => {
@@ -21,16 +20,16 @@ fetch('/userDetails')
 
 fetch('/history')
 	.then(response => {
-	if (!response.ok) {
-		throw new Error(`Network response was not ok (Status: ${response.status}, ${response.statusText})`);
-	}
+		if (!response.ok) {
+			throw new Error(`Network response was not ok (Status: ${response.status}, ${response.statusText})`);
+		}
 
-	const contentType = response.headers.get('content-type');
-	if (!contentType || !contentType.includes('application/json')) {
-		throw new Error('Response is not in JSON format');
-	}
+		const contentType = response.headers.get('content-type');
+		if (!contentType || !contentType.includes('application/json')) {
+			throw new Error('Response is not in JSON format');
+		}
 
-	return response.clone().json();
+		return response.clone().json();
 	})
 	.then(data => {
 		updateReviews(data);
@@ -63,22 +62,23 @@ function toggleActive() {
 sortBtn.addEventListener("click", () => {
 	sortBtn.classList.toggle("open");
 });
+
 filterBtn.addEventListener("click", () => {
 	filterBtn.classList.toggle("open");
 });
 
 //SORT SELECTION
 sortAll.forEach(option => {
-	option.addEventListener("click", () => {changeIcon(option, sortBtn)})
+	option.addEventListener("click", () => { changeIcon(option, sortBtn) })
 });
 
 //FILTER SELECTION
 filterAll.forEach(option => {
-	option.addEventListener("click", () => {changeIcon(option, filterBtn)})
+	option.addEventListener("click", () => { changeIcon(option, filterBtn) })
 });
 
 //Function for 
-function changeIcon(option, button){
+function changeIcon(option, button) {
 	let selected = option.innerText;
 	button.innerText = selected;
 
@@ -155,19 +155,21 @@ function applyFilterAndSort(selectedFilterValues, selectedSortValue) {
 		})
 		.catch(error => console.error('Error fetching data:', error));
 }
+
 document.addEventListener('DOMContentLoaded', () => {
 	fetchDataFromUrl();
 });
 
 function updateReviews(reviews) {
 	const reviewsContainer = document.querySelector('.history');
-	reviewsContainer.innerHTML = ''; 
+	reviewsContainer.innerHTML = '';
 
 	if (reviews && reviews.length > 0) {
 		reviews.forEach(review => {
 			const reviewBox = document.createElement('div');
 			reviewBox.classList.add('box');
-			reviewBox.id = `box-${review.id}`;
+			reviewBox.setAttribute('onClick', 'view(this)');
+			reviewBox.id = review.docId;
 
 			const content = document.createElement('div');
 			content.classList.add('content');
@@ -175,6 +177,14 @@ function updateReviews(reviews) {
 			const nameHeader = document.createElement('h1');
 			nameHeader.classList.add('name');
 			nameHeader.textContent = review.DocumentName;
+
+			const requesterParagraph = document.createElement('p');
+			requesterParagraph.textContent = 'Requester Email: ';
+
+			const requesterSpan = document.createElement('span');
+			requesterSpan.textContent = review.ReqEmail;
+
+			requesterParagraph.appendChild(requesterSpan);
 
 			const uploadDateParagraph = document.createElement('p');
 			uploadDateParagraph.textContent = 'Upload Date: ';
@@ -185,7 +195,7 @@ function updateReviews(reviews) {
 			uploadDateParagraph.appendChild(uploadDateSpan);
 
 			const reviewDateParagraph = document.createElement('p');
-			reviewDateParagraph.textContent = 'Review Date: ';
+			reviewDateParagraph.textContent = 'Approved Date: ';
 
 			const reviewDateSpan = document.createElement('span');
 			reviewDateSpan.textContent = new Date(review.ReviewDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -193,6 +203,7 @@ function updateReviews(reviews) {
 			reviewDateParagraph.appendChild(reviewDateSpan);
 
 			content.appendChild(nameHeader);
+			content.appendChild(requesterParagraph);
 			content.appendChild(uploadDateParagraph);
 			content.appendChild(reviewDateParagraph);
 
@@ -208,4 +219,15 @@ function updateReviews(reviews) {
 	} else {
 		reviewsContainer.innerHTML = '<p>No reviews available</p>';
 	}
+}
+
+function view(box) {
+	var docBlob;
+	fetch(`/blobdoc/${box.id}`, { method: 'POST' })
+		.then(res => res.blob())
+		.then(data => {
+			docBlob = new Blob([data], { type: 'application/pdf' });
+			const blobUrl = URL.createObjectURL(docBlob);
+			window.open(blobUrl, '_blank');
+		});
 }

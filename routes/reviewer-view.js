@@ -87,7 +87,7 @@ router.get('/history', (req, res) => {
                 res.status(500).json({ error: 'Internal Server Error' });
                 return;
             }
-            const query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status
+            const query = `SELECT d.documentId AS docId, d.fileName AS DocumentName, d.email AS ReqEmail, d.uploadDate AS UploadDate, rt.email AS RevEmail, rt.Status AS status
         FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}'
         GROUP BY d.documentId`;
 
@@ -114,7 +114,7 @@ router.get('/history', (req, res) => {
 router.get('/and', (req, res) => {
     try {
         pool.getConnection((err, connection) => {
-            let query = `SELECT d.fileName AS DocumentName, d.uploadDate AS UploadDate, rt.email AS email, rt.Status AS status
+            let query = `SELECT d.documentId AS docId, d.fileName AS DocumentName, d.email AS ReqEmail, d.uploadDate AS UploadDate, rt.email AS RevEmail, rt.Status AS status, rt.approvedDate AS ReviewDate
             FROM reviewtransaction AS rt JOIN document AS d ON rt.DocumentID = d.documentID WHERE rt.email = '${req.session.user.email}'
             GROUP BY d.documentId`;
 
@@ -171,6 +171,17 @@ router.get('/and', (req, res) => {
         console.error('Error in /data endpoint:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
+});
+
+router.post('/blobdoc/:docId', (req, res) => {
+    const { docId } = req.params;
+    global.conn.query('SELECT * FROM document WHERE documentId = ?', [docId], (err, result) => {
+        if (err) {
+            res.status(500).json({ error: 'Document ID not found in the server' });
+        }
+        const docBlob = result[0].content;
+        res.send(docBlob);
+    });
 });
 
 // GET logout

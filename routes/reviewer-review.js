@@ -55,23 +55,25 @@ router.post('/forapproval', (req, res) => {
 router.post('/approve/:docId', (req, res) => {
     const { docId } = req.params;
     const userEmail = req.session.user.email;
+    const content = req.body;
     const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
     global.conn.query('UPDATE reviewtransaction SET status = "Approved" WHERE documentId = ? AND email = ?', [docId, userEmail], (err, result) => {
         if (err) {
             res.status(404);
         }
     });
-    global.conn.query('UPDATE reviewtransaction SET approvedDate = ? WHERE documentId = ? AND email = ?', [formattedDate, docId, userEmail], (err, result) => {
+    global.conn.query('UPDATE reviewtransaction SET approvedDate = ? WHERE documentId = ? AND email = ?', [currentDate, docId, userEmail], (err, result) => {
         if (err) {
             res.status(404);
         }
     });
     global.conn.query(`UPDATE reviewtransaction AS rt_current JOIN reviewtransaction AS rt_next ON rt_current.documentId = rt_next.documentId
             AND rt_current.sequenceOrder = rt_next.sequenceOrder - 1 SET rt_next.status = 'Ongoing' WHERE rt_current.documentId = ? AND rt_current.email = ?;`, [docId, userEmail], (err, result) => {
+        if (err) {
+            res.status(404);
+        }
+    });
+    global.conn.query('UPDATE document SET content = ? WHERE documentId = ?', [content, docId], (err, result) => {
         if (err) {
             res.status(404);
         }

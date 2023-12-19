@@ -1,27 +1,27 @@
 * {
-	font-family: 'Helvetica', sans-serif;
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    font-family: 'Helvetica', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
-	--body-color: #E4E9F7;
-	--sidebar-color: #FFF;
-	--primary-color: #38B6FF;
-	--primary-color-light: #F6F5FF;
-	--toggle-color: #DDDD;
-	--text-color: #707070;
-	--box1-color: #4DA3FF;
+    --body-color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #38B6FF;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDDD;
+    --text-color: #707070;
+    --box1-color: #4DA3FF;
 
-	--tran-02: all 0.2s ease;
-	--tran-03: all 0.3s ease;
-	--tran-04: all 0.4s ease;
-	--tran-05: all 0.5s ease;
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
 }
 
 /* SORT&FILTER*/
-.filter-box{
+.filter-box {
     margin-left: 750px;
 }
 
@@ -79,7 +79,8 @@
     display: none;
 }
 
-.filter-items, .sort-items{
+.filter-items,
+.sort-items {
     display: flex;
     height: 50px;
     cursor: pointer;
@@ -100,7 +101,8 @@
 }
 
 
-.filter-items:hover, .sort-items:hover{
+.filter-items:hover,
+.sort-items:hover {
     background: var(--primary-color);
     transition: all 0.3s ease 0s;
 }
@@ -162,38 +164,50 @@
 }
 
 
-.filter-items.selected, .sort-items.selected{
+.filter-items.selected,
+.sort-items.selected {
     background-color: var(--primary-color);
     border-style: 2px solid var(--primary-color-light);
 }
 
-.filter-items.selected, .sort-items.selected{
+.filter-items.selected,
+.sort-items.selected {
     transform: scale(1);
 }
 
 /* LISTSSSS */
 .box {
-	border: none;
+    border: none;
     border-radius: 15px;
-	background-color: var(--primary-color-light);
-	margin-top: 10px;
-	margin-right: 10px;
-	padding: 20px;
-	height: 100px;
+    background-color: var(--primary-color-light);
+    margin-top: 10px;
+    margin-right: 10px;
+    padding: 20px;
+    height: 120px;
+    cursor: pointer;
 }
-.content{
-	width: 70%;
+
+.box:hover {
+    transition: all 0.3s ease 0s;
+    background: var(--sidebar-color);
+}
+
+.content {
+    width: 70%;
     color: var(--text-color);
-	float:left;
+    float: left;
 }
+
 .status {
-	float: right;
-	text-align: center;
-	border-radius: 25px;
-	background-color: var(--primary-color);
-	padding: 20px;
-	margin-left: auto;
+    float: right;
+    text-align: center;
+    border-radius: 25px;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    padding: 20px;
+    margin-left: auto;
 }
+
 .history {
     margin: 10px;
 }
